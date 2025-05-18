@@ -5,11 +5,15 @@ client/dist
 client/tmp
 client/out-tsc
 client/bazel-out
+server/dist
 
 # Node
 client/node_modules
 client/npm-debug.log
 client/yarn-error.log
+server/node_modules
+server/npm-debug.log
+server/yarn-error.log
 
 # IDEs and editors
 .idea/
