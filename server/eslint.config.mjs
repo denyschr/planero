@@ -33,8 +33,7 @@ export default [
           varsIgnorePattern: '^_',
           ignoreRestSiblings: true
         }
-      ],
-      'no-console': 'error'
+      ]
     }
   }),
   eslintPluginPrettierRecommended,
