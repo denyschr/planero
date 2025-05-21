@@ -5,20 +5,25 @@ import bcryptjs from 'bcryptjs';
 
 const userSchema = new Schema<UserDocument>(
   {
-    email: {
-      type: String,
-      required: [true, 'Email is required'],
-      validate: [validator.isEmail, 'invalid email'],
-      index: { unique: true }
-    },
     username: {
       type: String,
-      required: [true, 'Username is required']
+      required: [true, 'username is required'],
+      unique: true,
+      trim: true
+    },
+    email: {
+      type: String,
+      required: [true, 'email is required'],
+      validate: [validator.isEmail, 'email is not valid'],
+      unique: true,
+      trim: true
     },
     password: {
       type: String,
-      required: [true, 'Password is required'],
-      select: false
+      required: [true, 'password is required'],
+      minlength: [8, 'password must be at least 8 characters'],
+      select: false,
+      trim: true
     }
   },
   {

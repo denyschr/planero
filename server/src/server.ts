@@ -1,13 +1,26 @@
 import express from 'express';
-import { createServer } from 'http';
-import connectDB from './config/db';
+import mongoose from 'mongoose';
+import dbConfig from './config/db';
+import * as usersController from './controllers/users';
 
 const app = express();
-const server = createServer(app);
-const port = process.env.PORT || 3000;
 
-connectDB().then(() => {
-  server.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.post('/api/users', usersController.register);
+
+const PORT = process.env.PORT || 3000;
+
+mongoose
+  .connect(`mongodb://${dbConfig.host}:${dbConfig.port}/${dbConfig.name}`)
+  .then(() => {
+    console.log('Successfully connected to MongoDB.');
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}.`);
+    });
+  })
+  .catch((error) => {
+    console.error('Failed not connect to MongoDB:', error);
+    process.exit(1);
   });
-});
