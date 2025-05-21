@@ -7,21 +7,21 @@ const userSchema = new Schema<UserDocument>(
   {
     username: {
       type: String,
-      required: [true, 'username is required'],
+      required: [true, 'Username is required'],
       unique: true,
       trim: true
     },
     email: {
       type: String,
-      required: [true, 'email is required'],
-      validate: [validator.isEmail, 'email is not valid'],
+      required: [true, 'Email is required'],
+      validate: [validator.isEmail, 'Email is not valid'],
       unique: true,
       trim: true
     },
     password: {
       type: String,
-      required: [true, 'password is required'],
-      minlength: [8, 'password must be at least 8 characters'],
+      required: [true, 'Password is required'],
+      minlength: [8, 'Password must be at least 8 characters'],
       select: false,
       trim: true
     }

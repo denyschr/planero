@@ -29,3 +29,24 @@ export const register = async (request: Request, response: Response, next: NextF
     next(error);
   }
 };
+
+export const login = async (request: Request, response: Response, next: NextFunction) => {
+  try {
+    const { email, password } = request.body;
+    const user = await UserModel.findOne({ email }).select('+password');
+    const errors = { emailOrPassword: 'Incorrect email or password ' };
+
+    if (!user) {
+      response.status(401).json(errors);
+    } else {
+      const matched = await user.verifyPassword(password);
+      if (matched) {
+        response.status(200).send(normalizeUser(user));
+      } else {
+        response.status(401).json(errors);
+      }
+    }
+  } catch (error) {
+    next(error);
+  }
+};

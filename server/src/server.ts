@@ -9,6 +9,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.post('/api/users', usersController.register);
+app.post('/api/users/login', usersController.login);
 
 const PORT = process.env.PORT || 3000;
 
