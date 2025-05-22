@@ -1,5 +1,6 @@
 import express from 'express';
 import mongoose from 'mongoose';
+import cors from 'cors';
 
 import dbConfig from './config/db';
 import * as usersController from './controllers/users';
@@ -7,6 +8,7 @@ import authMiddleware from './middlewares/auth';
 
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
