@@ -1,27 +1,28 @@
-import { model, Schema } from 'mongoose';
+import mongoose from 'mongoose';
 import validator from 'validator';
-import { UserDocument } from '../types/user';
 import bcryptjs from 'bcryptjs';
 
-const userSchema = new Schema<UserDocument>(
+import { UserDocument } from '../types/user';
+
+const userSchema = new mongoose.Schema<UserDocument>(
   {
     username: {
       type: String,
-      required: [true, 'Username is required'],
+      required: true,
       unique: true,
       trim: true
     },
     email: {
       type: String,
-      required: [true, 'Email is required'],
-      validate: [validator.isEmail, 'Email is not valid'],
+      required: true,
+      validate: validator.isEmail,
       unique: true,
       trim: true
     },
     password: {
       type: String,
-      required: [true, 'Password is required'],
-      minlength: [8, 'Password must be at least 8 characters'],
+      required: true,
+      minlength: 8,
       select: false,
       trim: true
     }
@@ -49,4 +50,4 @@ userSchema.methods.verifyPassword = function (password: string): Promise<boolean
   return bcryptjs.compare(password, this.password);
 };
 
-export default model('User', userSchema);
+export default mongoose.model('User', userSchema);

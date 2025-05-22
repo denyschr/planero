@@ -1,5 +1,6 @@
 import express from 'express';
 import mongoose from 'mongoose';
+
 import dbConfig from './config/db';
 import * as usersController from './controllers/users';
 import authMiddleware from './middlewares/auth';

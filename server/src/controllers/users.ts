@@ -1,8 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
-import UserModel from '../models/user';
-import { UserDocument } from '../types/user';
 import { Error } from 'mongoose';
 import jwt from 'jsonwebtoken';
+
+import UserModel from '../models/user';
+import { UserDocument } from '../types/user';
 import authConfig from '../config/auth';
 import { ExpressRequest } from '../types/express-request';
 import { sendUnauthorized, sendUnprocessableEntity } from '../utils/responses';

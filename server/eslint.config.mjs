@@ -4,6 +4,7 @@ import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 import globals from 'globals';
+import * as eslintPluginImportX from 'eslint-plugin-import-x';
 
 export default [
   ...tseslint.config({
@@ -11,7 +12,9 @@ export default [
     extends: [
       eslint.configs.recommended,
       ...tseslint.configs.recommended,
-      ...tseslint.configs.stylistic
+      ...tseslint.configs.stylistic,
+      eslintPluginImportX.flatConfigs.recommended,
+      eslintPluginImportX.flatConfigs.typescript
     ],
     rules: {
       '@typescript-eslint/no-deprecated': 'error',
@@ -33,7 +36,15 @@ export default [
           varsIgnorePattern: '^_',
           ignoreRestSiblings: true
         }
-      ]
+      ],
+      'import-x/order': [
+        'error',
+        {
+          groups: ['builtin', 'external', 'internal', 'parent', 'sibling'],
+          'newlines-between': 'always'
+        }
+      ],
+      'import-x/no-named-as-default-member': 'off'
     }
   }),
   eslintPluginPrettierRecommended,
@@ -43,6 +54,14 @@ export default [
       parserOptions: {
         projectService: true,
         tsconfigRootDir: import.meta.dirname
+      }
+    },
+    settings: {
+      'import/resolver': {
+        typescript: {
+          alwaysTryTypes: true,
+          project: 'tsconfig.json'
+        }
       }
     }
   }

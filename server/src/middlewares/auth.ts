@@ -1,5 +1,6 @@
 import { NextFunction, Response } from 'express';
 import jwt from 'jsonwebtoken';
+
 import UserModel from '../models/user';
 import { ExpressRequest } from '../types/express-request';
 import authConfig from '../config/auth';
