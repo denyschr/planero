@@ -3,25 +3,24 @@ import jwt from 'jsonwebtoken';
 import UserModel from '../models/user';
 import { ExpressRequest } from '../types/express-request';
 import authConfig from '../config/auth';
+import { sendUnauthorized } from '../utils/responses';
 
 export default async (request: ExpressRequest, response: Response, next: NextFunction) => {
   try {
     const token = request.headers.authorization?.split(' ')[1];
     if (!token) {
-      response.sendStatus(401);
-      return;
+      return void sendUnauthorized(response, request.originalUrl);
     }
 
     const decoded = jwt.verify(token, authConfig.secret) as { id: string; email: string };
     const user = await UserModel.findById(decoded.id);
     if (!user) {
-      response.sendStatus(401);
-      return;
+      return void sendUnauthorized(response, request.originalUrl);
     }
 
     request.currentUser = user;
     next();
   } catch (_) {
-    response.sendStatus(401);
+    sendUnauthorized(response, request.originalUrl);
   }
 };
