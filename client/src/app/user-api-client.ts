@@ -25,6 +25,16 @@ export class UserApiClient {
     );
   }
 
+  public register(credentials: {
+    username: string;
+    email: string;
+    password: string;
+  }): Observable<User> {
+    return this.http
+      .post<User>(`${environment.baseUrl}/api/users`, credentials)
+      .pipe(tap((user) => this.save(user)));
+  }
+
   private save(user: User): void {
     this.jwtTokenStorage.save(user.token);
     this.user.set(user);

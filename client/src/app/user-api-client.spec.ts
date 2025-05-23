@@ -41,15 +41,13 @@ describe(UserApiClient.name, () => {
     it('should save a user and token on success', () => {
       const { jwtTokenStorageSpy, httpController, userApiClient, fakeUser } = setup();
 
-      expect(userApiClient.currentUser()).toBeUndefined();
-
       let actualUser: User | undefined;
       userApiClient.get().subscribe((fetchedUser) => (actualUser = fetchedUser));
 
       httpController.expectOne(`${environment.baseUrl}/api/user`).flush(fakeUser);
 
-      expect(actualUser).toBe(fakeUser);
-      expect(jwtTokenStorageSpy.save).toHaveBeenCalledWith(fakeUser.token);
+      expect(actualUser).withContext('You should emit the user').toBe(fakeUser);
+      expect(jwtTokenStorageSpy.save).toHaveBeenCalledOnceWith(fakeUser.token);
       expect(userApiClient.currentUser()).toBe(fakeUser);
       httpController.verify();
     });
@@ -71,9 +69,33 @@ describe(UserApiClient.name, () => {
 
       expect(actualError?.status).toBe(401);
       expect(actualError?.statusText).toBe('Unauthorized');
-      expect(jwtTokenStorageSpy.clear).toHaveBeenCalled();
+      expect(jwtTokenStorageSpy.clear).toHaveBeenCalledTimes(1);
       expect(userApiClient.currentUser()).toBeNull();
       httpController.verify();
     });
+  });
+
+  it('should register a user', () => {
+    const { jwtTokenStorageSpy, httpController, userApiClient, fakeUser } = setup();
+    const fakeCredentials = {
+      username: fakeUser.username,
+      email: fakeUser.email,
+      password: '12345678'
+    };
+
+    let actualUser: User | undefined;
+    userApiClient.register(fakeCredentials).subscribe((fetchedUser) => (actualUser = fetchedUser));
+
+    const fakeRequest = httpController.expectOne({
+      method: 'POST',
+      url: `${environment.baseUrl}/api/users`
+    });
+    expect(fakeRequest.request.body).toBe(fakeCredentials);
+    fakeRequest.flush(fakeUser);
+
+    expect(actualUser).withContext('You should emit the user').toBe(fakeUser);
+    expect(jwtTokenStorageSpy.save).toHaveBeenCalledOnceWith(fakeUser.token);
+    expect(userApiClient.currentUser()).toBe(fakeUser);
+    httpController.verify();
   });
 });

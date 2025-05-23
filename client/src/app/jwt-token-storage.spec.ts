@@ -19,7 +19,7 @@ describe(JwtTokenStorage.name, () => {
     const result = jwtTokenStorage.get();
 
     expect(result).toBe('foo');
-    expect(localStorageGetItemSpy).toHaveBeenCalledWith('token');
+    expect(localStorageGetItemSpy).toHaveBeenCalledOnceWith('token');
   });
 
   it('should return no token if none is saved', () => {
@@ -35,7 +35,7 @@ describe(JwtTokenStorage.name, () => {
 
     jwtTokenStorage.save('foo');
 
-    expect(Storage.prototype.setItem).toHaveBeenCalledWith('token', 'foo');
+    expect(Storage.prototype.setItem).toHaveBeenCalledOnceWith('token', 'foo');
   });
 
   it('should remove a token', () => {
@@ -44,6 +44,6 @@ describe(JwtTokenStorage.name, () => {
 
     jwtTokenStorage.clear();
 
-    expect(Storage.prototype.removeItem).toHaveBeenCalledWith('token');
+    expect(Storage.prototype.removeItem).toHaveBeenCalledOnceWith('token');
   });
 });
