@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { HttpErrorResponse, provideHttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
 
 import { environment } from '../environments/environment';
 
@@ -39,7 +40,7 @@ describe(UserApiClient.name, () => {
 
   describe('get', () => {
     it('should save a user and token on success', () => {
-      const { jwtTokenStorageSpy, httpController, userApiClient, fakeUser } = setup();
+      const { httpController, userApiClient, jwtTokenStorageSpy, fakeUser } = setup();
 
       let actualUser: User | undefined;
       userApiClient.get().subscribe((fetchedUser) => (actualUser = fetchedUser));
@@ -53,7 +54,7 @@ describe(UserApiClient.name, () => {
     });
 
     it('should clear the user and token on failure', () => {
-      const { jwtTokenStorageSpy, httpController, userApiClient } = setup();
+      const { httpController, userApiClient, jwtTokenStorageSpy } = setup();
 
       expect(userApiClient.currentUser()).toBeUndefined();
 
@@ -75,8 +76,31 @@ describe(UserApiClient.name, () => {
     });
   });
 
+  it('should log in a user', async () => {
+    const { httpController, userApiClient, jwtTokenStorageSpy, fakeUser } = setup();
+    const fakeCredentials = {
+      email: fakeUser.email,
+      password: '12345678'
+    };
+    const actualUser = firstValueFrom(userApiClient.login(fakeCredentials));
+
+    const fakeRequest = httpController.expectOne({
+      method: 'POST',
+      url: `${environment.baseUrl}/api/users/login`
+    });
+    expect(fakeRequest.request.body).toBe(fakeCredentials);
+    fakeRequest.flush(fakeUser);
+
+    await expectAsync(actualUser)
+      .withContext('You should emit the user')
+      .already.toBeResolvedTo(fakeUser);
+    expect(jwtTokenStorageSpy.save).toHaveBeenCalledOnceWith(fakeUser.token);
+    expect(userApiClient.currentUser()).toBe(fakeUser);
+    httpController.verify();
+  });
+
   it('should register a user', () => {
-    const { jwtTokenStorageSpy, httpController, userApiClient, fakeUser } = setup();
+    const { httpController, userApiClient, jwtTokenStorageSpy, fakeUser } = setup();
     const fakeCredentials = {
       username: fakeUser.username,
       email: fakeUser.email,

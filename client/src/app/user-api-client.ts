@@ -25,6 +25,12 @@ export class UserApiClient {
     );
   }
 
+  public login(credentials: { email: string; password: string }): Observable<User> {
+    return this.http
+      .post<User>(`${environment.baseUrl}/api/users/login`, credentials)
+      .pipe(tap((user) => this.save(user)));
+  }
+
   public register(credentials: {
     username: string;
     email: string;
