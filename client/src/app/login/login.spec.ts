@@ -212,6 +212,6 @@ describe(Login.name, () => {
     expect(message)
       .withContext('You should display an error message if the login fails')
       .toBeTruthy();
-    expect(message.textContent).toContain('Incorrect username or password');
+    expect(message.textContent).toContain('Incorrect email or password');
   });
 });
