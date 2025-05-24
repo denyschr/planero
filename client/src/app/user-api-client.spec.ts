@@ -6,22 +6,19 @@ import { firstValueFrom } from 'rxjs';
 import { environment } from '../environments/environment';
 
 import { UserApiClient } from './user-api-client';
-import { JwtTokenStorage } from './jwt-token-storage';
+import { JwtStorage } from './jwt-storage';
 import { User } from './models/user';
 
 describe(UserApiClient.name, () => {
   function setup() {
-    const jwtTokenStorageSpy = jasmine.createSpyObj<JwtTokenStorage>('JwtTokenStorage', [
-      'save',
-      'clear'
-    ]);
+    const jwtStorageSpy = jasmine.createSpyObj<JwtStorage>('JwtStorage', ['save', 'clear']);
     TestBed.configureTestingModule({
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
         {
-          provide: JwtTokenStorage,
-          useValue: jwtTokenStorageSpy
+          provide: JwtStorage,
+          useValue: jwtStorageSpy
         }
       ]
     });
@@ -35,12 +32,12 @@ describe(UserApiClient.name, () => {
       token: 'eyJhbGciOiJIUzI1Ni.eyJpZCI6IjY4MmVjM2E5ZD.0rWhF8l0CcwojYv3tWbGRjjRC4'
     };
 
-    return { jwtTokenStorageSpy, httpController, userApiClient, fakeUser };
+    return { httpController, userApiClient, jwtStorageSpy, fakeUser };
   }
 
   describe('get', () => {
     it('should save a user and token on success', () => {
-      const { httpController, userApiClient, jwtTokenStorageSpy, fakeUser } = setup();
+      const { httpController, userApiClient, jwtStorageSpy, fakeUser } = setup();
 
       let actualUser: User | undefined;
       userApiClient.get().subscribe((fetchedUser) => (actualUser = fetchedUser));
@@ -48,15 +45,13 @@ describe(UserApiClient.name, () => {
       httpController.expectOne(`${environment.baseUrl}/api/user`).flush(fakeUser);
 
       expect(actualUser).withContext('You should emit the user').toBe(fakeUser);
-      expect(jwtTokenStorageSpy.save).toHaveBeenCalledOnceWith(fakeUser.token);
+      expect(jwtStorageSpy.save).toHaveBeenCalledOnceWith(fakeUser.token);
       expect(userApiClient.currentUser()).toBe(fakeUser);
       httpController.verify();
     });
 
     it('should clear the user and token on failure', () => {
-      const { httpController, userApiClient, jwtTokenStorageSpy } = setup();
-
-      expect(userApiClient.currentUser()).toBeUndefined();
+      const { httpController, userApiClient, jwtStorageSpy } = setup();
 
       let actualError: HttpErrorResponse | undefined;
       userApiClient.get().subscribe({
@@ -70,14 +65,14 @@ describe(UserApiClient.name, () => {
 
       expect(actualError?.status).toBe(401);
       expect(actualError?.statusText).toBe('Unauthorized');
-      expect(jwtTokenStorageSpy.clear).toHaveBeenCalledTimes(1);
+      expect(jwtStorageSpy.clear).toHaveBeenCalledTimes(1);
       expect(userApiClient.currentUser()).toBeNull();
       httpController.verify();
     });
   });
 
   it('should log in a user', async () => {
-    const { httpController, userApiClient, jwtTokenStorageSpy, fakeUser } = setup();
+    const { httpController, userApiClient, jwtStorageSpy, fakeUser } = setup();
     const fakeCredentials = {
       email: fakeUser.email,
       password: '12345678'
@@ -94,13 +89,13 @@ describe(UserApiClient.name, () => {
     await expectAsync(actualUser)
       .withContext('You should emit the user')
       .already.toBeResolvedTo(fakeUser);
-    expect(jwtTokenStorageSpy.save).toHaveBeenCalledOnceWith(fakeUser.token);
+    expect(jwtStorageSpy.save).toHaveBeenCalledOnceWith(fakeUser.token);
     expect(userApiClient.currentUser()).toBe(fakeUser);
     httpController.verify();
   });
 
   it('should register a user', () => {
-    const { httpController, userApiClient, jwtTokenStorageSpy, fakeUser } = setup();
+    const { httpController, userApiClient, jwtStorageSpy, fakeUser } = setup();
     const fakeCredentials = {
       username: fakeUser.username,
       email: fakeUser.email,
@@ -118,7 +113,7 @@ describe(UserApiClient.name, () => {
     fakeRequest.flush(fakeUser);
 
     expect(actualUser).withContext('You should emit the user').toBe(fakeUser);
-    expect(jwtTokenStorageSpy.save).toHaveBeenCalledOnceWith(fakeUser.token);
+    expect(jwtStorageSpy.save).toHaveBeenCalledOnceWith(fakeUser.token);
     expect(userApiClient.currentUser()).toBe(fakeUser);
     httpController.verify();
   });

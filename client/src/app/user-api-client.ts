@@ -5,15 +5,15 @@ import { Observable, tap } from 'rxjs';
 import { environment } from '../environments/environment';
 
 import { User } from './models/user';
-import { JwtTokenStorage } from './jwt-token-storage';
+import { JwtStorage } from './jwt-storage';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserApiClient {
   private readonly http = inject(HttpClient);
-  private readonly jwtTokenStorage = inject(JwtTokenStorage);
-  private readonly user = signal<User | null | undefined>(undefined);
+  private readonly jwtStorage = inject(JwtStorage);
+  private readonly user = signal<User | null>(null);
   public readonly currentUser = this.user.asReadonly();
 
   public get(): Observable<User> {
@@ -42,12 +42,12 @@ export class UserApiClient {
   }
 
   private save(user: User): void {
-    this.jwtTokenStorage.save(user.token);
+    this.jwtStorage.save(user.token);
     this.user.set(user);
   }
 
   private clear(): void {
-    this.jwtTokenStorage.clear();
+    this.jwtStorage.clear();
     this.user.set(null);
   }
 }

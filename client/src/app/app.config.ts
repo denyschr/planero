@@ -12,7 +12,7 @@ import { provideRouter } from '@angular/router';
 
 import Noir from '../custom-theme';
 
-import { JwtTokenStorage } from './jwt-token-storage';
+import { JwtStorage } from './jwt-storage';
 import { UserApiClient } from './user-api-client';
 import { APP_ROUTES } from './app-routes';
 import { jwtInterceptor } from './jwt-interceptor';
@@ -22,9 +22,9 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(APP_ROUTES),
     provideAppInitializer(() => {
-      const jwtTokenStorage = inject(JwtTokenStorage);
+      const jwtStorage = inject(JwtStorage);
       const userApiClient = inject(UserApiClient);
-      return jwtTokenStorage.get() ? userApiClient.get().pipe(catchError(() => EMPTY)) : EMPTY;
+      return jwtStorage.get() ? userApiClient.get().pipe(catchError(() => EMPTY)) : EMPTY;
     }),
     provideHttpClient(withInterceptors([jwtInterceptor])),
     provideAnimationsAsync(),

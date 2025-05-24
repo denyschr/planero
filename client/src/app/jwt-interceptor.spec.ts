@@ -3,26 +3,26 @@ import { HttpClient, provideHttpClient, withInterceptors } from '@angular/common
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 
 import { jwtInterceptor } from './jwt-interceptor';
-import { JwtTokenStorage } from './jwt-token-storage';
+import { JwtStorage } from './jwt-storage';
 
 describe(jwtInterceptor.name, () => {
   function setup() {
-    const jwtTokenStorageSpy = jasmine.createSpyObj<JwtTokenStorage>('JwtTokenStorage', ['get']);
-    jwtTokenStorageSpy.get.and.returnValue(null);
+    const jwtStorageSpy = jasmine.createSpyObj<JwtStorage>('JwtStorage', ['get']);
+    jwtStorageSpy.get.and.returnValue(null);
     TestBed.configureTestingModule({
       providers: [
         provideHttpClient(withInterceptors([jwtInterceptor])),
         provideHttpClientTesting(),
         {
-          provide: JwtTokenStorage,
-          useValue: jwtTokenStorageSpy
+          provide: JwtStorage,
+          useValue: jwtStorageSpy
         }
       ]
     });
     const http = TestBed.inject(HttpClient);
     const httpController = TestBed.inject(HttpTestingController);
 
-    return { http, httpController, jwtTokenStorageSpy };
+    return { http, httpController, jwtStorageSpy };
   }
 
   it('should do nothing if there is no token', () => {
@@ -37,8 +37,8 @@ describe(jwtInterceptor.name, () => {
   });
 
   it('should send a token', () => {
-    const { http, httpController, jwtTokenStorageSpy } = setup();
-    jwtTokenStorageSpy.get.and.returnValue('token');
+    const { http, httpController, jwtStorageSpy } = setup();
+    jwtStorageSpy.get.and.returnValue('token');
 
     http.get('/foo').subscribe();
 

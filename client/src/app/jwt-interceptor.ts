@@ -1,14 +1,12 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 
-import { JwtTokenStorage } from './jwt-token-storage';
+import { JwtStorage } from './jwt-storage';
 
 export const jwtInterceptor: HttpInterceptorFn = (request, next) => {
-  const token = inject(JwtTokenStorage).get();
+  const token = inject(JwtStorage).get();
   if (token) {
-    const clone = request.clone({
-      setHeaders: { Authorization: `Bearer ${token}` }
-    });
+    const clone = request.clone({ setHeaders: { Authorization: `Bearer ${token}` } });
     return next(clone);
   }
   return next(request);
