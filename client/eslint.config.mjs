@@ -57,6 +57,7 @@ export default [
           }
         ],
         '@angular-eslint/component-class-suffix': 'off',
+        '@angular-eslint/prefer-on-push-component-change-detection': 'error',
         '@angular-eslint/prefer-signals': 'error',
         '@typescript-eslint/array-type': [
           'error',
