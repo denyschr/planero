@@ -21,10 +21,11 @@ export default [
       '@typescript-eslint/array-type': [
         'error',
         {
-          default: 'generic',
-          readonly: 'generic'
+          default: 'array',
+          readonly: 'array'
         }
       ],
+      '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
       '@typescript-eslint/no-unused-vars': [
         'error',
         {

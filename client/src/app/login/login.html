@@ -1,0 +1,62 @@
+<div class="flex flex-col items-center justify-center min-h-full p-5">
+  <div class="w-full sm:max-w-lg p-8 text-center rounded-lg shadow-xl">
+    <h1 class="mb-8 text-3xl font-bold">Sign in</h1>
+
+    @if (failed()) {
+      <p-message
+        id="login-failed-message"
+        severity="error"
+        icon="pi pi-times-circle"
+        styleClass="mb-6"
+        >Incorrect email or password</p-message
+      >
+    }
+
+    <form class="flex flex-col gap-6 mb-8" [formGroup]="form" (ngSubmit)="submit()">
+      <div class="flex flex-col gap-1">
+        <input type="email" placeholder="Email" pInputText fluid formControlName="email" />
+        @if (emailControl.dirty) {
+          @if (emailControl.hasError('required')) {
+            <p-message id="email-required-error" severity="error" variant="simple" size="small"
+              >Email is required</p-message
+            >
+          } @else if (emailControl.hasError('email')) {
+            <p-message id="email-invalid-error" severity="error" variant="simple" size="small"
+              >Email is invalid</p-message
+            >
+          }
+        }
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <input type="password" placeholder="Password" pInputText fluid formControlName="password" />
+        @if (passwordControl.dirty) {
+          @if (passwordControl.hasError('required')) {
+            <p-message id="password-required-error" severity="error" variant="simple" size="small"
+              >Password is required</p-message
+            >
+          } @else if (passwordControl.hasError('minlength')) {
+            <p-message id="password-length-error" severity="error" variant="simple" size="small"
+              >Password must be at least
+              {{ passwordControl.getError('minlength').requiredLength }} characters</p-message
+            >
+          }
+        }
+      </div>
+
+      <p-button
+        label="Sign in"
+        styleClass="w-full"
+        type="submit"
+        [disabled]="form.invalid || form.disabled"
+      />
+    </form>
+
+    <p id="register-prompt-text" class="text-sm text-gray-500">
+      Don't have an account?
+      <a class="font-semibold text-amber-500 hover:text-amber-600" routerLink="/register"
+        >Sign up</a
+      >
+    </p>
+  </div>
+</div>
