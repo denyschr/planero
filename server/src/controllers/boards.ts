@@ -15,3 +15,22 @@ export const list = async (request: ExpressRequest, response: Response, next: Ne
     next(error);
   }
 };
+
+export const create = async (request: ExpressRequest, response: Response, next: NextFunction) => {
+  try {
+    const currentUser = request.currentUser;
+    if (!currentUser) {
+      return void sendUnauthorized(response, request.originalUrl);
+    }
+    const { title, backgroundColor } = request.body;
+    const newBoard = new BoardModel({
+      title,
+      userId: currentUser.id,
+      backgroundColor
+    });
+    const savedBoard = await newBoard.save();
+    response.send(savedBoard);
+  } catch (error) {
+    next(error);
+  }
+};

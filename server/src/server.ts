@@ -24,6 +24,7 @@ app.post('/api/users', usersController.register);
 app.post('/api/users/login', usersController.login);
 app.get('/api/user', authMiddleware, usersController.get);
 app.get('/api/boards', authMiddleware, boardsController.list);
+app.post('/api/boards', authMiddleware, boardsController.create);
 
 const PORT = process.env.PORT || 3000;
 
