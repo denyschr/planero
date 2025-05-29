@@ -201,7 +201,7 @@ describe(Register.name, () => {
       .withContext('Your submit button should be disabled when the form is submitted')
       .toBeTruthy();
     expect(userApiClientSpy.register).toHaveBeenCalledOnceWith(fakeCredentials);
-    expect(router.navigateByUrl).toHaveBeenCalledOnceWith('/');
+    expect(router.navigateByUrl).toHaveBeenCalledOnceWith('/boards');
   });
 
   it('should call the user api client and display a message on failure', () => {

@@ -8,6 +8,7 @@ import { Message } from 'primeng/message';
 import { UserApiClient } from '../user-api-client';
 
 @Component({
+  selector: 'pln-login',
   templateUrl: './login.html',
   imports: [ReactiveFormsModule, Button, InputText, Message, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -37,7 +38,7 @@ export default class Login {
     this.failed.set(false);
     this.form.disable();
     this.userApiClient.login(this.form.getRawValue()).subscribe({
-      next: () => this.router.navigateByUrl('/'),
+      next: () => this.router.navigateByUrl('/boards'),
       error: () => {
         this.failed.set(true);
         this.form.enable();

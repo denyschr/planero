@@ -14,7 +14,7 @@ import Noir from '../custom-theme';
 
 import { JwtStorage } from './jwt-storage';
 import { UserApiClient } from './user-api-client';
-import { APP_ROUTES } from './app-routes';
+import { APP_ROUTES } from './routes';
 import { jwtInterceptor } from './jwt-interceptor';
 
 export const appConfig: ApplicationConfig = {

@@ -8,6 +8,7 @@ import { Message } from 'primeng/message';
 import { UserApiClient } from '../user-api-client';
 
 @Component({
+  selector: 'pln-register',
   templateUrl: './register.html',
   imports: [ReactiveFormsModule, RouterLink, Button, InputText, Message],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -39,7 +40,7 @@ export default class Register {
     this.failed.set(false);
     this.form.disable();
     this.userApiClient.register(this.form.getRawValue()).subscribe({
-      next: () => this.router.navigateByUrl('/'),
+      next: () => this.router.navigateByUrl('/boards'),
       error: () => {
         this.failed.set(true);
         this.form.enable();
