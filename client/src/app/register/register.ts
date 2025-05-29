@@ -27,13 +27,11 @@ export default class Register {
     Validators.required,
     Validators.minLength(8)
   ]);
-
   protected readonly form = this.formBuilder.group({
     username: this.usernameControl,
     email: this.emailControl,
     password: this.passwordControl
   });
-
   protected readonly failed = signal(false);
 
   protected submit(): void {

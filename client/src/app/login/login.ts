@@ -26,12 +26,10 @@ export default class Login {
     Validators.required,
     Validators.minLength(8)
   ]);
-
   protected readonly form = this.formBuilder.group({
     email: this.emailControl,
     password: this.passwordControl
   });
-
   protected readonly failed = signal(false);
 
   protected submit(): void {

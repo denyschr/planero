@@ -1,6 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
+import { Router } from '@angular/router';
 
 import { environment } from '../environments/environment';
 
@@ -12,8 +13,10 @@ import { JwtStorage } from './jwt-storage';
 })
 export class UserApiClient {
   private readonly http = inject(HttpClient);
+  private readonly router = inject(Router);
   private readonly jwtStorage = inject(JwtStorage);
   private readonly user = signal<User | null>(null);
+
   public readonly currentUser = this.user.asReadonly();
 
   public get(): Observable<User> {
@@ -39,6 +42,11 @@ export class UserApiClient {
     return this.http
       .post<User>(`${environment.baseUrl}/api/users`, credentials)
       .pipe(tap((user) => this.save(user)));
+  }
+
+  public logout(): void {
+    this.clear();
+    this.router.navigateByUrl('/home');
   }
 
   private save(user: User): void {

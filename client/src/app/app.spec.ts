@@ -8,14 +8,15 @@ describe(App.name, () => {
   function setup() {
     TestBed.configureTestingModule({});
     const fixture = TestBed.createComponent(App);
+    const debugElement = fixture.debugElement;
     fixture.detectChanges();
 
-    return { fixture };
+    return { fixture, debugElement };
   }
 
   it('should have a router outlet', () => {
-    const { fixture } = setup();
+    const { debugElement } = setup();
 
-    expect(fixture.debugElement.query(By.directive(RouterOutlet))).toBeTruthy();
+    expect(debugElement.query(By.directive(RouterOutlet))).toBeTruthy();
   });
 });

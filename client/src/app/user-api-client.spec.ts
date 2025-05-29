@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { HttpErrorResponse, provideHttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
+import { Router } from '@angular/router';
 
 import { environment } from '../environments/environment';
 
@@ -115,6 +116,27 @@ describe(UserApiClient.name, () => {
     expect(actualUser).withContext('You should emit the user').toBe(fakeUser);
     expect(jwtStorageSpy.save).toHaveBeenCalledOnceWith(fakeUser.token);
     expect(userApiClient.currentUser()).toBe(fakeUser);
+    httpController.verify();
+  });
+
+  it('should log out the user', () => {
+    const { httpController, userApiClient, jwtStorageSpy, fakeUser } = setup();
+    const router = TestBed.inject(Router);
+    spyOn(router, 'navigateByUrl');
+
+    let actualUser: User | undefined;
+    userApiClient.get().subscribe((fetchedUser) => (actualUser = fetchedUser));
+
+    httpController.expectOne(`${environment.baseUrl}/api/user`).flush(fakeUser);
+
+    expect(actualUser).withContext('You should emit the user').toBe(fakeUser);
+    expect(userApiClient.currentUser()).toBe(fakeUser);
+
+    userApiClient.logout();
+
+    expect(jwtStorageSpy.clear).toHaveBeenCalledTimes(1);
+    expect(userApiClient.currentUser()).toBeNull();
+    expect(router.navigateByUrl).toHaveBeenCalledOnceWith('/home');
     httpController.verify();
   });
 });
