@@ -1,7 +1,7 @@
 <section class="py-6 sm:py-10">
   <div class="max-w-6xl mx-auto px-4">
     <h2 class="mb-4 text-xl font-semibold">My Boards</h2>
-    <div class="grid grid-cols-[repeat(auto-fill,_minmax(15.5rem,_1fr))] gap-x-5">
+    <div class="grid grid-cols-[repeat(auto-fill,_minmax(15.5rem,_1fr))] gap-5">
       @for (board of boards(); track board.id) {
         <a
           class="grid place-content-center min-h-28 p-2 text-white text-center rounded-xl cursor-pointer duration-150 transition-opacity hover:opacity-90"
@@ -10,6 +10,15 @@
           >{{ board.title }}</a
         >
       }
+      <button
+        class="min-h-28 p-2 text-surface-600 rounded-xl bg-gray-200 cursor-pointer duration-150 transition-colors hover:bg-gray-300"
+        type="button"
+        (click)="dialogVisible.set(true)"
+      >
+        Create new board
+      </button>
     </div>
   </div>
 </section>
+
+<pln-create-board-dialog [(visible)]="dialogVisible" (created)="create()" />

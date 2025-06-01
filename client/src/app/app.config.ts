@@ -9,6 +9,7 @@ import { providePrimeNG } from 'primeng/config';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { catchError, EMPTY } from 'rxjs';
 import { provideRouter } from '@angular/router';
+import { MessageService } from 'primeng/api';
 
 import Noir from '../custom-theme';
 
@@ -28,6 +29,7 @@ export const appConfig: ApplicationConfig = {
     }),
     provideHttpClient(withInterceptors([jwtInterceptor])),
     provideAnimationsAsync(),
-    providePrimeNG({ theme: Noir })
+    providePrimeNG({ theme: Noir }),
+    MessageService
   ]
 };

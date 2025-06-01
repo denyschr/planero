@@ -15,4 +15,8 @@ export class BoardApiClient {
   public list(): Observable<Board[]> {
     return this.http.get<Board[]>(`${environment.baseUrl}/api/boards`);
   }
+
+  public create(board: { title: string; backgroundColor: string }): Observable<Board> {
+    return this.http.post<Board>(`${environment.baseUrl}/api/boards`, board);
+  }
 }
