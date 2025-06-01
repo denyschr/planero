@@ -29,9 +29,8 @@ export const APP_ROUTES: Route[] = [
     canActivate: [loggedInGuard({ loggedIn: true, otherwise: '/home' })],
     children: [
       {
-        path: '',
-        loadComponent: () => import('./dashboard-layout/dashboard-layout'),
-        loadChildren: () => import('./dashboard-layout/routes')
+        path: 'boards',
+        loadComponent: () => import('./boards/boards')
       }
     ]
   }

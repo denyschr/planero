@@ -40,7 +40,7 @@ describe(Topbar.name, () => {
 
   it('should display a logo', () => {
     const { element } = setup();
-    const logo = element.querySelector('a[href="/boards"]')!;
+    const logo = element.querySelector('a[href="/"]')!;
 
     expect(logo).withContext('You should have an `a` element to display the logo').toBeTruthy();
     expect(logo.textContent).withContext('The logo should have a text').toContain('Planero');
