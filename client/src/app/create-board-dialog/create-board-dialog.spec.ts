@@ -141,7 +141,7 @@ describe(CreateBoardDialog.name, () => {
   }));
 
   it('should call the board api client and display a toast message on failure', () => {
-    const { fixture, element, messageServiceSpy, boardApiClientSpy } = setup();
+    const { fixture, element, debugElement, messageServiceSpy, boardApiClientSpy } = setup();
     boardApiClientSpy.create.and.callFake(() => throwError(() => new Error('error')));
 
     const titleInput = element.querySelector<HTMLInputElement>('input[type=text]')!;
@@ -170,5 +170,8 @@ describe(CreateBoardDialog.name, () => {
       severity: 'error',
       summary: 'Failed to create new board'
     });
+    expect((debugElement.query(By.directive(Dialog)).componentInstance as Dialog).visible)
+      .withContext('The dialog should be visible')
+      .toBeTrue();
   });
 });

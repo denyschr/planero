@@ -14,7 +14,8 @@ import { CreateBoardDialog } from '../create-board-dialog/create-board-dialog';
 })
 export default class Boards {
   private readonly boardApiClient = inject(BoardApiClient);
-  private readonly refreshSubject = new Subject<void>();
+
+  public readonly refreshSubject = new Subject<void>();
 
   protected readonly boards = toSignal(
     this.refreshSubject.pipe(
