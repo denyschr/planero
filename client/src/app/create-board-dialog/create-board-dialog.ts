@@ -8,7 +8,7 @@ import { MessageService } from 'primeng/api';
 
 import { BoardApiClient } from '../board-api-client';
 
-const BOARD_BACKGROUNDS = [
+export const BOARD_BACKGROUNDS = [
   'rgb(0, 121, 191)',
   'rgb(210, 144, 52)',
   'rgb(81, 152, 57)',

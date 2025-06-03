@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
+import { MessageService } from 'primeng/api';
 
 import { BoardApiClient } from '../board-api-client';
 import { Board } from '../models/board';
@@ -18,6 +19,7 @@ describe(Boards.name, () => {
     TestBed.configureTestingModule({
       providers: [
         provideRouter([]),
+        MessageService,
         {
           provide: BoardApiClient,
           useValue: boardApiClientSpy
