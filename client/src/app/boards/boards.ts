@@ -25,7 +25,7 @@ export default class Boards {
   );
   protected readonly dialogVisible = signal(false);
 
-  protected create(): void {
+  protected refresh(): void {
     this.refreshSubject.next();
   }
 }
