@@ -1,14 +1,17 @@
 <header class="fixed top-0 left-0 w-full bg-white shadow-sm">
   <div class="flex items-center justify-between flex-wrap max-w-7xl min-h-14 mx-auto px-4 py-1.5">
-    <a class="text-xl font-bold hover:opacity-70" routerLink="/">
-      <i class="pi pi-sparkles"></i>
+    <a
+      class="flex items-center text-xl font-bold duration-150 transition-opacity hover:opacity-70"
+      routerLink="/"
+    >
+      <svg width="32" height="32" aria-hidden="true">
+        <use href="/icons/icons.svg#logo-mark" />
+      </svg>
       Planero
     </a>
-    <div class="flex items-center space-x-4">
+    <div class="flex items-center sm:space-x-4">
       <a class="font-medium" routerLink="/login" pButton outlined severity="secondary">Log in</a>
-      <a class="hidden! sm:inline-block! font-medium" routerLink="/register" pButton
-        >Get Planero for free</a
-      >
+      <a class="max-sm:hidden! font-medium" routerLink="/register" pButton>Get Planero for free</a>
     </div>
   </div>
 </header>

@@ -9,12 +9,13 @@ import { providePrimeNG } from 'primeng/config';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { catchError, EMPTY } from 'rxjs';
 import { provideRouter } from '@angular/router';
+import { MessageService } from 'primeng/api';
 
 import Noir from '../custom-theme';
 
 import { JwtStorage } from './jwt-storage';
 import { UserApiClient } from './user-api-client';
-import { APP_ROUTES } from './app-routes';
+import { APP_ROUTES } from './routes';
 import { jwtInterceptor } from './jwt-interceptor';
 
 export const appConfig: ApplicationConfig = {
@@ -28,6 +29,7 @@ export const appConfig: ApplicationConfig = {
     }),
     provideHttpClient(withInterceptors([jwtInterceptor])),
     provideAnimationsAsync(),
-    providePrimeNG({ theme: Noir })
+    providePrimeNG({ theme: Noir }),
+    MessageService
   ]
 };

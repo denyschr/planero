@@ -14,7 +14,6 @@ test.describe('Login', () => {
 
   test('should display a login page', async ({ page }) => {
     await page.goto('/login');
-
     await page.route('**/api/users/login', async (route) => {
       await page.waitForTimeout(500);
       await route.fulfill({
@@ -62,12 +61,11 @@ test.describe('Login', () => {
     await test.expect(getEmailInput(page)).toBeDisabled();
     await test.expect(getPasswordInput(page)).toBeDisabled();
     await test.expect(getSubmitButton(page)).toBeDisabled();
-    await test.expect(page).toHaveURL('/');
+    await test.expect(page).toHaveURL('/boards');
   });
 
   test('should navigate to the register page when clicking the link', async ({ page }) => {
     await page.goto('/login');
-
     await page.getByRole('link', { name: 'Sign up' }).click();
 
     await test.expect(page).toHaveURL('/register');
@@ -75,7 +73,6 @@ test.describe('Login', () => {
 
   test('should display a message if login fails', async ({ page }) => {
     await page.goto('/login');
-
     await page.route('**/api/users/login', async (route) => {
       await page.waitForTimeout(500);
       await route.fulfill({

@@ -1,0 +1,46 @@
+<p-dialog
+  header="Create board"
+  [modal]="true"
+  [(visible)]="visible"
+  [style]="{ width: '25rem' }"
+  [draggable]="false"
+>
+  <form class="flex flex-col gap-y-4" [formGroup]="form" (ngSubmit)="submit()">
+    <fieldset>
+      <legend class="mb-1 font-semibold">Background</legend>
+      <div class="flex flex-wrap items-center gap-2">
+        @for (background of backgrounds(); track background) {
+          <label class="inline-flex relative">
+            <input
+              class="w-8 h-8 appearance-none rounded-full cursor-pointer duration-150 transition-opacity hover:opacity-70"
+              [style.background-color]="background"
+              type="radio"
+              [value]="background"
+              formControlName="background"
+            />
+            <span
+              class="pi pi-check absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-primary pointer-events-none"
+              [class.hidden!]="backgroundControl.value !== background"
+              aria-hidden="true"
+            ></span>
+          </label>
+        }
+      </div>
+    </fieldset>
+    <div class="flex flex-col gap-1">
+      <label class="font-semibold" for="title">Board title</label>
+      <input id="title" type="text" pInputText fluid formControlName="title" />
+      @if (titleControl.dirty && titleControl.hasError('required')) {
+        <p-message id="title-required-error" severity="error" variant="simple" size="small"
+          >Board title is required</p-message
+        >
+      }
+    </div>
+    <p-button
+      label="Create"
+      styleClass="w-full"
+      type="submit"
+      [disabled]="form.invalid || form.disabled"
+    />
+  </form>
+</p-dialog>
