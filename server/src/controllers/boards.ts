@@ -1,16 +1,43 @@
 import { NextFunction, Response } from 'express';
+import { Types } from 'mongoose';
 
 import BoardModel from '../models/board';
 import { ExpressRequest } from '../types/express-request';
-import { sendUnauthorized } from '../utils/responses';
+import { sendNotFound, sendUnauthorized } from '../utils/responses';
 
 export const list = async (request: ExpressRequest, response: Response, next: NextFunction) => {
   try {
-    if (!request.currentUser) {
+    const currentUser = request.currentUser;
+    if (!currentUser) {
       return void sendUnauthorized(response, request.originalUrl);
     }
-    const boards = await BoardModel.find({ userId: request.currentUser.id });
+    const boards = await BoardModel.find({ userId: currentUser.id });
     response.send(boards);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const get = async (request: ExpressRequest, response: Response, next: NextFunction) => {
+  try {
+    const currentUser = request.currentUser;
+    if (!currentUser) {
+      return void sendUnauthorized(response, request.originalUrl);
+    }
+
+    if (!Types.ObjectId.isValid(request.params.id)) {
+      return void sendNotFound(response, request.originalUrl);
+    }
+
+    const board = await BoardModel.findOne({
+      _id: request.params.id,
+      userId: currentUser.id
+    });
+    if (!board) {
+      return void sendNotFound(response, request.originalUrl);
+    }
+
+    response.send(board);
   } catch (error) {
     next(error);
   }
