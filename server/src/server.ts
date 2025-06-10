@@ -14,7 +14,7 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: '*'
+    origin: 'http://localhost:4000'
   }
 });
 
@@ -38,8 +38,14 @@ app.post('/api/boards', authMiddleware, boardsController.create);
 
 const PORT = process.env.PORT || 3000;
 
-io.on('connection', () => {
-  console.log('connected');
+io.on('connection', (socket) => {
+  socket.on('join-board', (board) => {
+    boardsController.join(socket, board);
+  });
+
+  socket.on('leave-board', (board) => {
+    boardsController.leave(socket, board);
+  });
 });
 
 mongoose

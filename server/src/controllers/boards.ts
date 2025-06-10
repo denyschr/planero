@@ -1,5 +1,6 @@
 import { NextFunction, Response } from 'express';
 import { Types } from 'mongoose';
+import { Socket } from 'socket.io';
 
 import BoardModel from '../models/board';
 import { ExpressRequest } from '../types/express-request';
@@ -60,4 +61,12 @@ export const create = async (request: ExpressRequest, response: Response, next: 
   } catch (error) {
     next(error);
   }
+};
+
+export const join = (socket: Socket, board: { id: string }) => {
+  socket.join(board.id);
+};
+
+export const leave = (socket: Socket, board: { id: string }) => {
+  socket.leave(board.id);
 };
