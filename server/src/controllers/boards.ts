@@ -26,14 +26,12 @@ export const get = async (request: ExpressRequest, response: Response, next: Nex
       return void sendUnauthorized(response, request.originalUrl);
     }
 
-    if (!Types.ObjectId.isValid(request.params.id)) {
+    const boardId = request.params.id;
+    if (!Types.ObjectId.isValid(boardId)) {
       return void sendNotFound(response, request.originalUrl);
     }
 
-    const board = await BoardModel.findOne({
-      _id: request.params.id,
-      userId: currentUser.id
-    });
+    const board = await BoardModel.findById(boardId);
     if (!board) {
       return void sendNotFound(response, request.originalUrl);
     }

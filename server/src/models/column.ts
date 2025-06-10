@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
 
-import { Board } from '../types/board';
+import { Column } from '../types/column';
 
-const boardSchema = new mongoose.Schema<Board>(
+const columnSchema = new mongoose.Schema<Column>(
   {
     title: {
       type: String,
@@ -12,8 +12,8 @@ const boardSchema = new mongoose.Schema<Board>(
       type: mongoose.Schema.Types.ObjectId,
       required: true
     },
-    backgroundColor: {
-      type: String,
+    boardId: {
+      type: mongoose.Schema.Types.ObjectId,
       required: true
     }
   },
@@ -22,4 +22,4 @@ const boardSchema = new mongoose.Schema<Board>(
   }
 );
 
-export default mongoose.model('Board', boardSchema);
+export default mongoose.model('Column', columnSchema);

@@ -10,6 +10,7 @@ import dbConfig from './config/db';
 import authConfig from './config/auth';
 import * as usersController from './controllers/users';
 import * as boardsController from './controllers/boards';
+import * as columnsController from './controllers/columns';
 import authMiddleware from './middlewares/auth';
 import { SocketRequest } from './types/socket-request';
 import UserModel from './models/user';
@@ -38,6 +39,7 @@ app.post('/api/users/login', usersController.login);
 app.get('/api/user', authMiddleware, usersController.get);
 app.get('/api/boards', authMiddleware, boardsController.list);
 app.get('/api/boards/:id', authMiddleware, boardsController.get);
+app.get('/api/boards/:id/columns', authMiddleware, columnsController.list);
 app.post('/api/boards', authMiddleware, boardsController.create);
 
 const PORT = process.env.PORT || 3000;
