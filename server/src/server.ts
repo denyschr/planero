@@ -3,12 +3,16 @@ import { createServer } from 'http';
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
+import jwt from 'jsonwebtoken';
 import { Server } from 'socket.io';
 
 import dbConfig from './config/db';
+import authConfig from './config/auth';
 import * as usersController from './controllers/users';
 import * as boardsController from './controllers/boards';
 import authMiddleware from './middlewares/auth';
+import { SocketRequest } from './types/socket-request';
+import UserModel from './models/user';
 
 const app = express();
 const server = createServer(app);
@@ -38,7 +42,25 @@ app.post('/api/boards', authMiddleware, boardsController.create);
 
 const PORT = process.env.PORT || 3000;
 
-io.on('connection', (socket) => {
+io.use(async (socket: SocketRequest, next) => {
+  try {
+    const token = (socket.handshake.auth.token as string) ?? '';
+    const decoded = jwt.verify(token.split(' ')[1], authConfig.secret) as {
+      id: string;
+      email: string;
+    };
+
+    const user = await UserModel.findById(decoded.id);
+    if (!user) {
+      return next(new Error('Authentication error'));
+    }
+
+    socket.currentUser = user;
+    next();
+  } catch (_) {
+    next(new Error('Authentication error'));
+  }
+}).on('connection', (socket) => {
   socket.on('join-board', (board) => {
     boardsController.join(socket, board);
   });
