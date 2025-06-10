@@ -70,6 +70,10 @@ io.use(async (socket: SocketRequest, next) => {
   socket.on('leave-board', (board) => {
     boardsController.leave(socket, board);
   });
+
+  socket.on('create-column', (column) => {
+    columnsController.create(io, socket, column);
+  });
 });
 
 mongoose
