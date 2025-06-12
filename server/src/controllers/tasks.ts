@@ -4,7 +4,7 @@ import { Server } from 'socket.io';
 
 import { ExpressRequest } from '../types/express-request';
 import { sendNotFound, sendUnauthorized } from '../utils/responses';
-import ColumnModel from '../models/column';
+import TaskModel from '../models/task';
 import { SocketRequest } from '../types/socket-request';
 import { getErrorMessage } from '../utils/error-message';
 
@@ -19,8 +19,8 @@ export const list = async (request: ExpressRequest, response: Response, next: Ne
       return void sendNotFound(response, request.originalUrl);
     }
 
-    const columns = await ColumnModel.find({ boardId });
-    response.send(columns);
+    const tasks = await TaskModel.find({ boardId });
+    response.send(tasks);
   } catch (error) {
     next(error);
   }
@@ -29,21 +29,22 @@ export const list = async (request: ExpressRequest, response: Response, next: Ne
 export const create = async (
   io: Server,
   socket: SocketRequest,
-  column: { title: string; boardId: string }
+  task: { title: string; boardId: string; columnId: string }
 ) => {
   try {
     const currentUser = socket.currentUser;
     if (!currentUser) {
-      return void socket.emit('create-column-failure', 'Unauthorized');
+      return void socket.emit('create-task-failure', 'Unauthorized');
     }
-    const newColumn = new ColumnModel({
-      title: column.title,
+    const newTask = new TaskModel({
+      title: task.title,
       userId: currentUser.id,
-      boardId: column.boardId
+      boardId: task.boardId,
+      columnId: task.columnId
     });
-    const savedColumn = await newColumn.save();
-    io.to(column.boardId).emit('create-column-success', savedColumn);
+    const savedTask = await newTask.save();
+    io.to(task.boardId).emit('create-task-success', savedTask);
   } catch (error) {
-    socket.emit('create-column-failure', getErrorMessage(error));
+    socket.emit('create-task-failure', getErrorMessage(error));
   }
 };

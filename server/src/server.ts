@@ -11,6 +11,7 @@ import authConfig from './config/auth';
 import * as usersController from './controllers/users';
 import * as boardsController from './controllers/boards';
 import * as columnsController from './controllers/columns';
+import * as tasksController from './controllers/tasks';
 import authMiddleware from './middlewares/auth';
 import { SocketRequest } from './types/socket-request';
 import UserModel from './models/user';
@@ -40,6 +41,7 @@ app.get('/api/user', authMiddleware, usersController.get);
 app.get('/api/boards', authMiddleware, boardsController.list);
 app.get('/api/boards/:id', authMiddleware, boardsController.get);
 app.get('/api/boards/:id/columns', authMiddleware, columnsController.list);
+app.get('/api/boards/:id/tasks', authMiddleware, tasksController.list);
 app.post('/api/boards', authMiddleware, boardsController.create);
 
 const PORT = process.env.PORT || 3000;
@@ -73,6 +75,10 @@ io.use(async (socket: SocketRequest, next) => {
 
   socket.on('create-column', (column) => {
     columnsController.create(io, socket, column);
+  });
+
+  socket.on('create-task', (task) => {
+    tasksController.create(io, socket, task);
   });
 });
 
