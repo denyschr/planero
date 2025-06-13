@@ -47,3 +47,37 @@ export const create = async (
     socket.emit('create-column-failure', getErrorMessage(error));
   }
 };
+
+export const update = async (
+  io: Server,
+  socket: SocketRequest,
+  column: { id: string; boardId: string; fields: { title: string } }
+) => {
+  try {
+    if (!socket.currentUser) {
+      return void socket.emit('update-column-failure', 'Unauthorized');
+    }
+    const updatedColumn = await ColumnModel.findByIdAndUpdate(column.id, column.fields, {
+      new: true
+    });
+    io.to(column.boardId).emit('update-column-success', updatedColumn);
+  } catch (error) {
+    socket.emit('update-column-failure', getErrorMessage(error));
+  }
+};
+
+export const deleteColumn = async (
+  io: Server,
+  socket: SocketRequest,
+  column: { id: string; boardId: string }
+) => {
+  try {
+    if (!socket.currentUser) {
+      return void socket.emit('delete-column-failure', 'Unauthorized');
+    }
+    await ColumnModel.deleteOne({ _id: column.id });
+    io.to(column.boardId).emit('delete-column-success', column.id);
+  } catch (error) {
+    socket.emit('delete-column-failure', getErrorMessage(error));
+  }
+};

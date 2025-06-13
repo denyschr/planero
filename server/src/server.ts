@@ -85,6 +85,14 @@ io.use(async (socket: SocketRequest, next) => {
     columnsController.create(io, socket, column);
   });
 
+  socket.on('update-column', (column) => {
+    columnsController.update(io, socket, column);
+  });
+
+  socket.on('delete-column', (column) => {
+    columnsController.deleteColumn(io, socket, column);
+  });
+
   socket.on('create-task', (task) => {
     tasksController.create(io, socket, task);
   });
