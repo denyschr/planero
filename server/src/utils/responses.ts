@@ -9,6 +9,15 @@ export const sendUnauthorized = (response: Response, url: string, message = 'Una
   });
 };
 
+export const sendNotFound = (response: Response, url: string, message = 'Not Found') => {
+  return response.status(404).send({
+    code: 404,
+    message,
+    url,
+    success: false
+  });
+};
+
 export const sendUnprocessableEntity = (
   response: Response,
   url: string,
