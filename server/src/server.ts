@@ -96,6 +96,14 @@ io.use(async (socket: SocketRequest, next) => {
   socket.on('create-task', (task) => {
     tasksController.create(io, socket, task);
   });
+
+  socket.on('update-task', (task) => {
+    tasksController.update(io, socket, task);
+  });
+
+  socket.on('delete-task', (task) => {
+    tasksController.deleteTask(io, socket, task);
+  });
 });
 
 mongoose

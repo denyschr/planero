@@ -48,3 +48,41 @@ export const create = async (
     socket.emit('create-task-failure', getErrorMessage(error));
   }
 };
+
+export const update = async (
+  io: Server,
+  socket: SocketRequest,
+  task: {
+    id: string;
+    boardId: string;
+    fields: { title?: string; description?: string; columnId?: string };
+  }
+) => {
+  try {
+    if (!socket.currentUser) {
+      return void socket.emit('update-task-failure', 'Unauthorized');
+    }
+    const updatedTask = await TaskModel.findByIdAndUpdate(task.id, task.fields, {
+      new: true
+    });
+    io.to(task.boardId).emit('update-task-success', updatedTask);
+  } catch (error) {
+    socket.emit('update-task-failure', getErrorMessage(error));
+  }
+};
+
+export const deleteTask = async (
+  io: Server,
+  socket: SocketRequest,
+  task: { id: string; boardId: string }
+) => {
+  try {
+    if (!socket.currentUser) {
+      return void socket.emit('delete-task-failure', 'Unauthorized');
+    }
+    await TaskModel.deleteOne({ _id: task.id });
+    io.to(task.boardId).emit('delete-task-success', task.id);
+  } catch (error) {
+    socket.emit('delete-task-failure', getErrorMessage(error));
+  }
+};
