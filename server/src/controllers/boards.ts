@@ -1,10 +1,12 @@
 import { NextFunction, Response } from 'express';
 import { Types } from 'mongoose';
-import { Socket } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 
 import BoardModel from '../models/board';
 import { ExpressRequest } from '../types/express-request';
 import { sendNotFound, sendUnauthorized } from '../utils/responses';
+import { getErrorMessage } from '../utils/error-message';
+import { SocketRequest } from '../types/socket-request';
 
 export const list = async (request: ExpressRequest, response: Response, next: NextFunction) => {
   try {
@@ -58,6 +60,34 @@ export const create = async (request: ExpressRequest, response: Response, next: 
     response.send(savedBoard);
   } catch (error) {
     next(error);
+  }
+};
+
+export const update = async (
+  io: Server,
+  socket: SocketRequest,
+  board: { id: string; fields: { title: string } }
+) => {
+  try {
+    if (!socket.currentUser) {
+      return void socket.emit('update-board-failure', 'Unauthorized');
+    }
+    const updatedBoard = await BoardModel.findByIdAndUpdate(board.id, board.fields, { new: true });
+    io.to(board.id).emit('update-board-success', updatedBoard);
+  } catch (error) {
+    socket.emit('update-board-failure', getErrorMessage(error));
+  }
+};
+
+export const deleteBoard = async (io: Server, socket: SocketRequest, board: { id: string }) => {
+  try {
+    if (!socket.currentUser) {
+      return void socket.emit('delete-board-failure', 'Unauthorized');
+    }
+    await BoardModel.deleteOne({ _id: board.id });
+    io.to(board.id).emit('delete-board-success');
+  } catch (error) {
+    socket.emit('delete-board-failure', getErrorMessage(error));
   }
 };
 

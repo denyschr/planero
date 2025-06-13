@@ -73,6 +73,14 @@ io.use(async (socket: SocketRequest, next) => {
     boardsController.leave(socket, board);
   });
 
+  socket.on('update-board', (board) => {
+    boardsController.update(io, socket, board);
+  });
+
+  socket.on('delete-board', (board) => {
+    boardsController.deleteBoard(io, socket, board);
+  });
+
   socket.on('create-column', (column) => {
     columnsController.create(io, socket, column);
   });
