@@ -1,0 +1,18 @@
+@if (!editing()) {
+  <button
+    class="p-2 text-lg font-bold leading-5 text-white rounded cursor-pointer duration-150 transition-colors hover:bg-white/20"
+    type="button"
+    (click)="startEditing()"
+  >
+    {{ value() }}
+  </button>
+}
+<input
+  class="p-2 text-lg font-bold leading-5 text-white"
+  type="text"
+  [hidden]="!editing()"
+  [(ngModel)]="value"
+  (blur)="stopEditing()"
+  (keyup.enter)="stopEditing()"
+  #inputRef
+/>

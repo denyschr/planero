@@ -1,0 +1,8 @@
+@if (vm(); as vm) {
+  @let board = vm.board;
+  <div class="h-full" [style.background-color]="board.backgroundColor">
+    <div class="px-2 py-4">
+      <pln-board-title-form [value]="board.title" />
+    </div>
+  </div>
+}
