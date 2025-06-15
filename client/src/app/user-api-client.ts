@@ -24,10 +24,7 @@ export class UserApiClient {
   public get(): Observable<User> {
     return this.http.get<User>(`${environment.baseUrl}/api/user`).pipe(
       tap({
-        next: (user) => {
-          this.save(user);
-          this.websocket.connect(user);
-        },
+        next: (user) => this.save(user),
         error: () => this.clear()
       })
     );
@@ -58,6 +55,7 @@ export class UserApiClient {
   private save(user: User): void {
     this.jwtStorage.save(user.token);
     this.user.set(user);
+    this.websocket.connect(user);
   }
 
   private clear(): void {
