@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, Signal } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { combineLatest } from 'rxjs';
+import { combineLatest, filter, tap } from 'rxjs';
 
 import { Board as BoardType } from '../models/board';
 import { BoardApiClient } from '../board-api-client';
@@ -23,10 +23,22 @@ export class Board {
   protected readonly vm: Signal<ViewModel | undefined>;
 
   constructor() {
+    const router = inject(Router);
     const route = inject(ActivatedRoute);
 
     const id = route.snapshot.paramMap.get('id')!;
     const board$ = this.boardApiClient.get(id);
+
+    router.events
+      .pipe(
+        filter((event) => event instanceof NavigationStart),
+        tap(() => {
+          this.boardApiClient.leave(id);
+        })
+      )
+      .subscribe();
+
+    this.boardApiClient.join(id);
 
     this.vm = toSignal(
       combineLatest({

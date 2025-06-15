@@ -19,6 +19,12 @@ export class Websocket {
     });
   }
 
+  public emit(eventName: string, message: unknown): void {
+    if (this.socket) {
+      this.socket.emit(eventName, message);
+    }
+  }
+
   public disconnect(): void {
     if (this.socket) {
       this.socket.disconnect();
