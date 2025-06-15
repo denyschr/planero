@@ -1,5 +1,5 @@
 <input
-  class="p-2 text-lg font-bold leading-5 text-white"
+  class="w-full h-7 px-2.5 py-1 text-sm font-medium"
   type="text"
   [hidden]="!editing()"
   [(ngModel)]="value"
@@ -10,7 +10,7 @@
 />
 
 <button
-  class="p-2 text-lg font-bold leading-5 text-white rounded cursor-pointer duration-150 transition-colors hover:bg-white/20"
+  class="w-full h-7 px-2.5 py-1 text-sm font-medium text-left cursor-pointer"
   type="button"
   [hidden]="editing()"
   (click)="startEditing()"

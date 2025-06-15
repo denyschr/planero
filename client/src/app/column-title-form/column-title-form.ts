@@ -13,12 +13,12 @@ import {
 import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'pln-board-title-form',
-  templateUrl: './board-title-form.html',
+  selector: 'pln-column-title-form',
+  templateUrl: './column-title-form.html',
   imports: [FormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class BoardTitleForm {
+export class ColumnTitleForm {
   private readonly injector = inject(Injector);
 
   private originalValue = '';

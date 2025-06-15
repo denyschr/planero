@@ -17,8 +17,8 @@ export class UserApiClient {
   private readonly router = inject(Router);
   private readonly jwtStorage = inject(JwtStorage);
   private readonly websocket = inject(Websocket);
-  private readonly user = signal<User | null>(null);
 
+  private readonly user = signal<User | null>(null);
   public readonly currentUser = this.user.asReadonly();
 
   public get(): Observable<User> {

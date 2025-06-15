@@ -1,8 +1,20 @@
 @if (vm(); as vm) {
   @let board = vm.board;
-  <div class="h-full" [style.background-color]="board.backgroundColor">
-    <div class="px-2 py-4">
+  <div class="flex flex-col h-full" [style.background-color]="board.backgroundColor">
+    <div class="px-5 py-4 bg-black/50">
       <pln-board-title-form [value]="board.title" />
+    </div>
+    <div class="grow mb-2 p-4 overflow-x-auto overflow-y-hidden">
+      <ol class="flex gap-x-3 h-full">
+        @for (column of vm.columns; track column.id) {
+          <li class="shrink-0 w-[272px] h-full select-none">
+            <pln-column-card [column]="column" />
+          </li>
+        }
+        <div class="shrink-0 w-[272px] h-full">
+          <pln-column-form (created)="create($event)" />
+        </div>
+      </ol>
     </div>
   </div>
 }
