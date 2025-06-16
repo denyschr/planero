@@ -52,7 +52,7 @@ export class ColumnTitleForm {
     const currentValue = this.value().trim();
     if (currentValue === '') {
       this.value.set(this.originalValue);
-    } else {
+    } else if (currentValue !== this.originalValue) {
       this.changed.emit(currentValue);
     }
 

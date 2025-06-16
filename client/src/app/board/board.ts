@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, Signal } from '@angular/core';
 import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { combineLatest, filter, tap } from 'rxjs';
+import { combineLatest, filter, scan, startWith, switchMap, tap } from 'rxjs';
 
 import { Board as BoardType } from '../models/board';
 import { BoardApiClient } from '../board-api-client';
@@ -10,6 +10,7 @@ import { ColumnApiClient } from '../column-api-client';
 import { Column } from '../models/column';
 import { ColumnForm } from '../column-form/column-form';
 import { ColumnCard } from '../column-card/column-card';
+import { Websocket } from '../websocket';
 
 type ViewModel = {
   board: BoardType;
@@ -25,6 +26,7 @@ type ViewModel = {
 export class Board {
   private readonly boardApiClient = inject(BoardApiClient);
   private readonly columnApiClient = inject(ColumnApiClient);
+  private readonly websocket = inject(Websocket);
 
   protected readonly id: string;
   protected readonly vm: Signal<ViewModel | undefined>;
@@ -37,7 +39,14 @@ export class Board {
     this.boardApiClient.join(this.id);
 
     const board$ = this.boardApiClient.get(this.id);
-    const columns$ = this.columnApiClient.list(this.id);
+    const columns$ = this.columnApiClient.list(this.id).pipe(
+      switchMap((columns) =>
+        this.websocket.listen<Column>('create-column-success').pipe(
+          scan((columns, newColumn) => [...columns, newColumn], columns),
+          startWith(columns)
+        )
+      )
+    );
 
     router.events
       .pipe(
