@@ -13,6 +13,7 @@
               [column]="column"
               [tasks]="vm.tasks"
               (createdTask)="createTask($event, column.id)"
+              (deleted)="deleteColumn($event)"
             />
           </li>
         }

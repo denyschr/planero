@@ -22,7 +22,7 @@ type ViewModel = {
 };
 
 type BoardAction = { type: 'update'; board: BoardType };
-type ColumnAction = { type: 'create'; column: Column } | { type: 'delete'; columnId: string };
+type ColumnAction = { type: 'create'; column: Column } | { type: 'delete'; id: string };
 type TaskAction = { type: 'create'; task: Task };
 
 @Component({
@@ -67,7 +67,7 @@ export class Board {
             if (action.type === 'create') {
               return [...columns, action.column];
             } else {
-              return columns.filter((column) => column.id !== action.columnId);
+              return columns.filter((column) => column.id !== action.id);
             }
           }, initialColumns),
           startWith(initialColumns)
@@ -115,6 +115,13 @@ export class Board {
       });
 
     this.websocket
+      .listen<string>('delete-column-success')
+      .pipe(takeUntilDestroyed())
+      .subscribe((id) => {
+        this.columnActions$.next({ type: 'delete', id });
+      });
+
+    this.websocket
       .listen<Task>('create-task-success')
       .pipe(takeUntilDestroyed())
       .subscribe((task) => {
@@ -132,6 +139,10 @@ export class Board {
 
   protected createColumn(title: string): void {
     this.columnApiClient.create({ title, boardId: this.id });
+  }
+
+  protected deleteColumn(id: string): void {
+    this.columnApiClient.delete(id, this.id);
   }
 
   protected createTask(title: string, columnId: string): void {
