@@ -20,6 +20,7 @@ export class ColumnCard {
   });
   public readonly deleted = output<string>();
   public readonly createdTask = output<string>();
+  public readonly changedTitle = output<string>();
 
   protected delete(): void {
     this.deleted.emit(this.column().id);
@@ -27,5 +28,9 @@ export class ColumnCard {
 
   protected createTask(title: string): void {
     this.createdTask.emit(title);
+  }
+
+  protected changeTitle(title: string): void {
+    this.changedTitle.emit(title);
   }
 }

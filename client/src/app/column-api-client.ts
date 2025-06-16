@@ -22,6 +22,10 @@ export class ColumnApiClient {
     this.websocket.emit('create-column', column);
   }
 
+  public update(id: string, boardId: string, fields: { title: string }): void {
+    this.websocket.emit('update-column', { id, boardId, fields });
+  }
+
   public delete(id: string, boardId: string): void {
     this.websocket.emit('delete-column', { id, boardId });
   }
