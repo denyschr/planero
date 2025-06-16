@@ -11,10 +11,13 @@ import { Column } from '../models/column';
 import { ColumnForm } from '../column-form/column-form';
 import { ColumnCard } from '../column-card/column-card';
 import { Websocket } from '../websocket';
+import { TaskApiClient } from '../task-api-client';
+import { Task } from '../models/task';
 
 type ViewModel = {
   board: BoardType;
   columns: Column[];
+  tasks: Task[];
 };
 
 @Component({
@@ -26,6 +29,7 @@ type ViewModel = {
 export class Board {
   private readonly boardApiClient = inject(BoardApiClient);
   private readonly columnApiClient = inject(ColumnApiClient);
+  private readonly taskApiClient = inject(TaskApiClient);
   private readonly websocket = inject(Websocket);
 
   protected readonly id: string;
@@ -47,6 +51,14 @@ export class Board {
         )
       )
     );
+    const tasks$ = this.taskApiClient.list(this.id).pipe(
+      switchMap((tasks) =>
+        this.websocket.listen<Task>('create-task-success').pipe(
+          scan((tasks, newTask) => [...tasks, newTask], tasks),
+          startWith(tasks)
+        )
+      )
+    );
 
     router.events
       .pipe(
@@ -60,12 +72,17 @@ export class Board {
     this.vm = toSignal(
       combineLatest({
         board: board$,
-        columns: columns$
+        columns: columns$,
+        tasks: tasks$
       })
     );
   }
 
-  protected create(title: string): void {
+  protected createColumn(title: string): void {
     this.columnApiClient.create({ title, boardId: this.id });
+  }
+
+  protected createTask(title: string, columnId: string): void {
+    this.taskApiClient.create({ title, boardId: this.id, columnId });
   }
 }

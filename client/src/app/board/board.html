@@ -8,11 +8,15 @@
       <ol class="flex gap-x-3 h-full">
         @for (column of vm.columns; track column.id) {
           <li class="shrink-0 w-[272px] h-full select-none">
-            <pln-column-card [column]="column" />
+            <pln-column-card
+              [column]="column"
+              [tasks]="vm.tasks"
+              (createdTask)="createTask($event, column.id)"
+            />
           </li>
         }
         <div class="shrink-0 w-[272px] h-full">
-          <pln-column-form (created)="create($event)" />
+          <pln-column-form (created)="createColumn($event)" />
         </div>
       </ol>
     </div>
