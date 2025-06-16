@@ -26,6 +26,10 @@ export class BoardApiClient {
     return this.http.post<Board>(`${environment.baseUrl}/api/boards`, board);
   }
 
+  public update(id: string, fields: { title: string }): void {
+    this.websocket.emit('update-board', { id, fields });
+  }
+
   public join(id: string): void {
     this.websocket.emit('join-board', { id });
   }

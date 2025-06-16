@@ -42,7 +42,13 @@ export class Board {
     this.id = route.snapshot.paramMap.get('id')!;
     this.boardApiClient.join(this.id);
 
-    const board$ = this.boardApiClient.get(this.id);
+    const board$ = this.boardApiClient
+      .get(this.id)
+      .pipe(
+        switchMap((board) =>
+          this.websocket.listen<BoardType>('update-board-success').pipe(startWith(board))
+        )
+      );
     const columns$ = this.columnApiClient.list(this.id).pipe(
       switchMap((columns) =>
         this.websocket.listen<Column>('create-column-success').pipe(
@@ -84,5 +90,9 @@ export class Board {
 
   protected createTask(title: string, columnId: string): void {
     this.taskApiClient.create({ title, boardId: this.id, columnId });
+  }
+
+  protected changeTitle(title: string): void {
+    this.boardApiClient.update(this.id, { title });
   }
 }

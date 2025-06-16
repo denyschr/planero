@@ -2,7 +2,7 @@
   @let board = vm.board;
   <div class="flex flex-col h-full" [style.background-color]="board.backgroundColor">
     <div class="px-5 py-4 bg-black/50">
-      <pln-board-title-form [value]="board.title" />
+      <pln-board-title-form [value]="board.title" (changed)="changeTitle($event)" />
     </div>
     <div class="grow mb-2 p-4 overflow-x-auto overflow-y-hidden">
       <ol class="flex gap-x-3 h-full">
