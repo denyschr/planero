@@ -1,8 +1,9 @@
 @if (vm(); as vm) {
   @let board = vm.board;
   <div class="flex flex-col h-full" [style.background-color]="board.backgroundColor">
-    <div class="px-5 py-4 bg-black/50">
+    <div class="flex items-center justify-between gap-x-4 px-5 py-4 bg-black/50">
       <pln-board-title-form [value]="board.title" (changed)="changeTitle($event)" />
+      <pln-board-options (deleted)="delete()" />
     </div>
     <div class="grow mb-2 p-4 overflow-x-auto overflow-y-hidden">
       <ol class="flex gap-x-3 h-full">

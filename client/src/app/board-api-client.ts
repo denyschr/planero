@@ -30,6 +30,10 @@ export class BoardApiClient {
     this.websocket.emit('update-board', { id, fields });
   }
 
+  public delete(id: string): void {
+    this.websocket.emit('delete-board', { id });
+  }
+
   public join(id: string): void {
     this.websocket.emit('join-board', { id });
   }
