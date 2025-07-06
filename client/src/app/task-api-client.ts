@@ -21,4 +21,16 @@ export class TaskApiClient {
   public create(task: { title: string; boardId: string; columnId: string }): void {
     this.websocket.emit('create-task', task);
   }
+
+  public update(
+    id: string,
+    boardId: string,
+    fields: { title?: string; description?: string; columnId?: string }
+  ): void {
+    this.websocket.emit('update-task', { id, boardId, fields });
+  }
+
+  public delete(id: string, boardId: string): void {
+    this.websocket.emit('delete-task', { id, boardId });
+  }
 }

@@ -4,15 +4,15 @@ import { Button } from 'primeng/button';
 import { MenuItem } from 'primeng/api';
 
 @Component({
-  selector: 'pln-board-options',
-  templateUrl: './board-options.html',
+  selector: 'pln-board-menu',
+  templateUrl: './board-menu.html',
   imports: [Menu, Button],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class BoardOptions {
+export class BoardMenu {
   protected readonly items = signal<MenuItem[]>([
     {
-      label: 'Options',
+      label: 'Menu',
       items: [
         {
           label: 'Delete this board',

@@ -1,110 +1,65 @@
-import { ChangeDetectionStrategy, Component, inject, Signal } from '@angular/core';
-import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { combineLatest, filter, map, scan, startWith, Subject, switchMap, tap } from 'rxjs';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ActivatedRoute, NavigationStart, Router, RouterOutlet } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { filter, tap } from 'rxjs';
 
 import { Board as BoardType } from '../models/board';
 import { BoardApiClient } from '../board-api-client';
-import { BoardTitleForm } from '../board-title-form/board-title-form';
 import { ColumnApiClient } from '../column-api-client';
 import { Column } from '../models/column';
-import { ColumnForm } from '../column-form/column-form';
 import { ColumnCard } from '../column-card/column-card';
 import { Websocket } from '../websocket';
 import { TaskApiClient } from '../task-api-client';
 import { Task } from '../models/task';
-import { BoardOptions } from '../board-options/board-options';
-
-type ViewModel = {
-  board: BoardType;
-  columns: Column[];
-  tasks: Task[];
-};
-
-type BoardAction = { type: 'update'; board: BoardType };
-type ColumnAction =
-  | { type: 'create'; column: Column }
-  | { type: 'update'; column: Column }
-  | { type: 'delete'; id: string };
-type TaskAction = { type: 'create'; task: Task };
+import { BoardMenu } from '../board-menu/board-menu';
+import { BoardState } from '../board-state';
+import { InplaceForm } from '../inplace-form/inplace-form';
+import { InplaceInput } from '../inplace-input/inplace-input';
 
 @Component({
   selector: 'pln-board',
   templateUrl: './board.html',
-  imports: [BoardTitleForm, ColumnForm, ColumnCard, BoardOptions],
+  imports: [ColumnCard, BoardMenu, RouterOutlet, InplaceForm, InplaceInput],
+  providers: [BoardState],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Board {
   private readonly boardApiClient = inject(BoardApiClient);
   private readonly columnApiClient = inject(ColumnApiClient);
   private readonly taskApiClient = inject(TaskApiClient);
+  private readonly boardState = inject(BoardState);
   private readonly websocket = inject(Websocket);
 
-  private readonly boardActions$ = new Subject<BoardAction>();
-  private readonly columnActions$ = new Subject<ColumnAction>();
-  private readonly taskActions$ = new Subject<TaskAction>();
-
   protected readonly id: string;
-  protected readonly vm: Signal<ViewModel | undefined>;
+  protected readonly vm = computed(() => ({
+    board: this.boardState.board(),
+    columns: this.boardState.columns(),
+    tasks: this.boardState.tasks(),
+    loaded: this.boardState.loaded()
+  }));
 
   constructor() {
     const router = inject(Router);
     const route = inject(ActivatedRoute);
 
-    this.id = route.snapshot.paramMap.get('id')!;
-    this.boardApiClient.join(this.id);
-
-    const board$ = this.boardApiClient.get(this.id).pipe(
-      switchMap((initialBoard) =>
-        this.boardActions$.pipe(
-          map((action) => action.board),
-          startWith(initialBoard)
-        )
-      )
-    );
-
-    const columns$ = this.columnApiClient.list(this.id).pipe(
-      switchMap((initialColumns) =>
-        this.columnActions$.pipe(
-          scan((columns, action) => {
-            if (action.type === 'create') {
-              return [...columns, action.column];
-            } else if (action.type === 'update') {
-              return columns.map((column) =>
-                column.id === action.column.id ? action.column : column
-              );
-            } else {
-              return columns.filter((column) => column.id !== action.id);
-            }
-          }, initialColumns),
-          startWith(initialColumns)
-        )
-      )
-    );
-
-    const tasks$ = this.taskApiClient.list(this.id).pipe(
-      switchMap((initialTasks) =>
-        this.taskActions$.pipe(
-          scan((tasks, action) => [...tasks, action.task], initialTasks),
-          startWith(initialTasks)
-        )
-      )
-    );
-
     router.events
       .pipe(
-        filter((event) => event instanceof NavigationStart),
+        filter((event) => event instanceof NavigationStart && !event.url.includes('/boards')),
         tap(() => {
           this.boardApiClient.leave(this.id);
         })
       )
       .subscribe();
 
+    this.id = route.snapshot.paramMap.get('id')!;
+    this.boardApiClient.join(this.id);
+    this.boardState.idSubject.next(this.id);
+
     this.websocket
       .listen<BoardType>('update-board-success')
       .pipe(takeUntilDestroyed())
       .subscribe((board) => {
-        this.boardActions$.next({ type: 'update', board });
+        this.boardState.updateBoard(board);
       });
 
     this.websocket
@@ -118,37 +73,55 @@ export class Board {
       .listen<Column>('create-column-success')
       .pipe(takeUntilDestroyed())
       .subscribe((column) => {
-        this.columnActions$.next({ type: 'create', column });
+        this.boardState.addColumn(column);
       });
 
     this.websocket
       .listen<Column>('update-column-success')
       .pipe(takeUntilDestroyed())
       .subscribe((column) => {
-        this.columnActions$.next({ type: 'update', column });
+        this.boardState.updateColumn(column);
       });
 
     this.websocket
       .listen<string>('delete-column-success')
       .pipe(takeUntilDestroyed())
       .subscribe((id) => {
-        this.columnActions$.next({ type: 'delete', id });
+        this.boardState.deleteColumn(id);
       });
 
     this.websocket
       .listen<Task>('create-task-success')
       .pipe(takeUntilDestroyed())
       .subscribe((task) => {
-        this.taskActions$.next({ type: 'create', task });
+        this.boardState.addTask(task);
       });
 
-    this.vm = toSignal(
-      combineLatest({
-        board: board$,
-        columns: columns$,
-        tasks: tasks$
-      })
-    );
+    this.websocket
+      .listen<Task>('update-task-success')
+      .pipe(takeUntilDestroyed())
+      .subscribe((task) => {
+        this.boardState.updateTask(task);
+      });
+
+    this.websocket
+      .listen<string>('delete-task-success')
+      .pipe(takeUntilDestroyed())
+      .subscribe((id) => {
+        this.boardState.deleteTask(id);
+      });
+  }
+
+  protected updateBoardTitle(title: string): void {
+    this.boardApiClient.update(this.id, { title });
+  }
+
+  protected deleteBoard(): void {
+    this.boardApiClient.delete(this.id);
+  }
+
+  protected updateColumnTitle(title: string, id: string): void {
+    this.columnApiClient.update(id, this.id, { title });
   }
 
   protected createColumn(title: string): void {
@@ -161,17 +134,5 @@ export class Board {
 
   protected createTask(title: string, columnId: string): void {
     this.taskApiClient.create({ title, boardId: this.id, columnId });
-  }
-
-  protected changeTitle(title: string): void {
-    this.boardApiClient.update(this.id, { title });
-  }
-
-  protected delete(): void {
-    this.boardApiClient.delete(this.id);
-  }
-
-  protected changeColumnTitle(title: string, id: string): void {
-    this.columnApiClient.update(id, this.id, { title });
   }
 }

@@ -1,6 +1,7 @@
 import { Route } from '@angular/router';
 
 import { Board } from '../board/board';
+import { TaskDialog } from '../task-dialog/task-dialog';
 
 import { Boards } from './boards';
 
@@ -11,7 +12,13 @@ const BOARD_ROUTES: Route[] = [
   },
   {
     path: ':id',
-    component: Board
+    component: Board,
+    children: [
+      {
+        path: 'tasks/:id',
+        component: TaskDialog
+      }
+    ]
   }
 ];
 

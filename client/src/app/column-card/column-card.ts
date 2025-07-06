@@ -1,36 +1,26 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 
 import { Column } from '../models/column';
-import { ColumnTitleForm } from '../column-title-form/column-title-form';
-import { TaskForm } from '../task-form/task-form';
 import { TaskCard } from '../task-card/task-card';
 import { Task } from '../models/task';
 import { ColumnOptions } from '../column-options/column-options';
+import { InplaceTextarea } from '../inplace-textarea/inplace-textarea';
+import { InplaceForm } from '../inplace-form/inplace-form';
 
 @Component({
   selector: 'pln-column-card',
   templateUrl: './column-card.html',
-  imports: [ColumnTitleForm, TaskForm, TaskCard, ColumnOptions],
+  imports: [TaskCard, ColumnOptions, InplaceTextarea, InplaceForm],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ColumnCard {
   public readonly column = input.required<Column>();
-  public readonly tasks = input.required<Task[], Task[]>({
-    transform: (tasks: Task[]) => tasks.filter((task) => task.columnId === this.column().id)
-  });
-  public readonly deleted = output<string>();
-  public readonly createdTask = output<string>();
-  public readonly changedTitle = output<string>();
+  public readonly tasks = input.required<Task[]>();
+  public readonly titleChanged = output<string>();
+  public readonly columnDeleted = output<void>();
+  public readonly taskCreated = output<string>();
 
-  protected delete(): void {
-    this.deleted.emit(this.column().id);
-  }
-
-  protected createTask(title: string): void {
-    this.createdTask.emit(title);
-  }
-
-  protected changeTitle(title: string): void {
-    this.changedTitle.emit(title);
-  }
+  protected readonly filteredTasks = computed(() =>
+    this.tasks().filter((task) => task.columnId === this.column().id)
+  );
 }
