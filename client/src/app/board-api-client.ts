@@ -22,7 +22,7 @@ export class BoardApiClient {
     return this.http.get<Board>(`${environment.baseUrl}/api/boards/${id}`);
   }
 
-  public create(board: { title: string; backgroundColor: string }): Observable<Board> {
+  public create(board: { title: string }): Observable<Board> {
     return this.http.post<Board>(`${environment.baseUrl}/api/boards`, board);
   }
 

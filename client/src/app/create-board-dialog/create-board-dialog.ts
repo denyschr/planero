@@ -8,15 +8,6 @@ import { MessageService } from 'primeng/api';
 
 import { BoardApiClient } from '../board-api-client';
 
-export const BOARD_BACKGROUNDS = [
-  'rgb(0, 121, 191)',
-  'rgb(210, 144, 52)',
-  'rgb(81, 152, 57)',
-  'rgb(176, 70, 50)',
-  'rgb(137, 96, 158)',
-  'rgb(205, 90, 145)'
-];
-
 @Component({
   selector: 'pln-create-board-dialog',
   templateUrl: './create-board-dialog.html',
@@ -28,27 +19,26 @@ export class CreateBoardDialog {
   private readonly messageService = inject(MessageService);
   private readonly boardApiClient = inject(BoardApiClient);
 
-  protected readonly backgrounds = signal(BOARD_BACKGROUNDS);
-  protected readonly backgroundControl = this.formBuilder.control(this.backgrounds()[0]);
   protected readonly titleControl = this.formBuilder.control('', [Validators.required]);
   protected readonly form = this.formBuilder.group({
-    background: this.backgroundControl,
     title: this.titleControl
   });
+  protected readonly submitted = signal(false);
 
   public readonly visible = model.required<boolean>();
   public readonly created = output<void>();
 
   protected submit(): void {
-    this.form.disable();
-    const { title, background: backgroundColor } = this.form.getRawValue();
-    this.boardApiClient.create({ title, backgroundColor }).subscribe({
+    this.submitted.set(true);
+    this.boardApiClient.create(this.form.getRawValue()).subscribe({
       next: () => {
-        this.visible.set(false);
+        this.submitted.set(false);
         this.created.emit();
+        this.form.reset();
+        this.visible.set(false);
       },
       error: () => {
-        this.form.enable();
+        this.submitted.set(false);
         this.messageService.add({ severity: 'error', summary: 'Failed to create new board' });
       }
     });

@@ -1,4 +1,4 @@
-import { fakeAsync, flush, TestBed } from '@angular/core/testing';
+import { fakeAsync, TestBed } from '@angular/core/testing';
 import { MessageService } from 'primeng/api';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { By } from '@angular/platform-browser';
@@ -8,7 +8,7 @@ import { of, throwError } from 'rxjs';
 import { BoardApiClient } from '../board-api-client';
 import { Board } from '../models/board';
 
-import { BOARD_BACKGROUNDS, CreateBoardDialog } from './create-board-dialog';
+import { CreateBoardDialog } from './create-board-dialog';
 
 describe(CreateBoardDialog.name, () => {
   function setup() {
@@ -50,6 +50,7 @@ describe(CreateBoardDialog.name, () => {
       .withContext('The background of the dialog should be blocked')
       .toBeTrue();
     expect(dialogComponent.draggable).withContext('The dialog should NOT be draggable').toBeFalse();
+    expect(dialogComponent.dismissableMask).withContext('').toBeTrue();
   });
 
   it('should have a disabled submit button if the form is incomplete', () => {
@@ -63,19 +64,6 @@ describe(CreateBoardDialog.name, () => {
 
   it('should be possible to create a new board if the form is complete', () => {
     const { fixture, element } = setup();
-    const backgroundInputs = element.querySelectorAll<HTMLInputElement>('input[type=radio]');
-    expect(backgroundInputs.length)
-      .withContext('You should have a radio input for each background')
-      .toBe(BOARD_BACKGROUNDS.length);
-    backgroundInputs.forEach((backgroundInput, index) => {
-      expect(backgroundInput.style.backgroundColor)
-        .withContext('You should apply a background color to each radio input')
-        .toBe(BOARD_BACKGROUNDS[index]);
-    });
-    expect(backgroundInputs[0].checked)
-      .withContext('You should have the first background selected')
-      .toBeTrue();
-
     const titleInput = element.querySelector<HTMLInputElement>('input[type=text]')!;
     expect(titleInput).withContext('You should have an input for the title').toBeTruthy();
     titleInput.value = 'foo';
@@ -104,9 +92,6 @@ describe(CreateBoardDialog.name, () => {
     boardApiClientSpy.create.and.returnValue(of({ id: '1' } as Board));
     spyOn(component.created, 'emit');
 
-    const backgroundInputs = element.querySelectorAll<HTMLInputElement>('input[type=radio]');
-    backgroundInputs[1].click();
-
     const titleInput = element.querySelector<HTMLInputElement>('input[type=text]')!;
     titleInput.value = 'foo';
     titleInput.dispatchEvent(new Event('input'));
@@ -116,24 +101,6 @@ describe(CreateBoardDialog.name, () => {
     button.click();
     fixture.detectChanges();
 
-    flush();
-
-    backgroundInputs.forEach((backgroundInput) => {
-      expect(backgroundInput.hasAttribute('disabled'))
-        .withContext('Your background fields should be disabled when the form is submitted')
-        .toBeTruthy();
-    });
-
-    expect(titleInput.hasAttribute('disabled'))
-      .withContext('Your title field should be disabled when the form is submitted')
-      .toBeTruthy();
-    expect(button.hasAttribute('disabled'))
-      .withContext('Your submit button should be disabled when the form is submitted')
-      .toBeTruthy();
-    expect(boardApiClientSpy.create).toHaveBeenCalledOnceWith({
-      title: 'foo',
-      backgroundColor: BOARD_BACKGROUNDS[1]
-    });
     expect((debugElement.query(By.directive(Dialog)).componentInstance as Dialog).visible)
       .withContext('The dialog should NOT be visible')
       .toBeFalse();
@@ -153,18 +120,8 @@ describe(CreateBoardDialog.name, () => {
     button.click();
     fixture.detectChanges();
 
-    element.querySelectorAll('input[type=radio]').forEach((backgroundInput) => {
-      expect(backgroundInput.hasAttribute('disabled'))
-        .withContext('Your background fields should NOT be disabled when the form submission fails')
-        .toBeFalsy();
-    });
-
-    expect(titleInput.hasAttribute('disabled'))
-      .withContext('Your title field should NOT be disabled when the form submission fails')
-      .toBeFalsy();
     expect(boardApiClientSpy.create).toHaveBeenCalledOnceWith({
-      title: 'foo',
-      backgroundColor: BOARD_BACKGROUNDS[0]
+      title: 'foo'
     });
     expect(messageServiceSpy.add).toHaveBeenCalledOnceWith({
       severity: 'error',

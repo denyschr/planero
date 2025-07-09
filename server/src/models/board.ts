@@ -11,10 +11,6 @@ const boardSchema = new mongoose.Schema<Board>(
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       required: true
-    },
-    backgroundColor: {
-      type: String,
-      required: true
     }
   },
   {

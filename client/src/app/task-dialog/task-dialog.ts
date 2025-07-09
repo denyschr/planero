@@ -112,7 +112,7 @@ export class TaskDialog {
     this.taskApiClient.update(this.id, this.boardId, { columnId: column.id });
   }
 
-  protected update(): void {
+  protected updateTask(): void {
     const { title, description } = this.form.getRawValue();
     const task = this.vm()?.task;
     if (task?.title !== title || task?.description !== description) {
@@ -121,7 +121,7 @@ export class TaskDialog {
     }
   }
 
-  protected delete(): void {
+  protected deleteTask(): void {
     this.taskApiClient.delete(this.id, this.boardId);
   }
 

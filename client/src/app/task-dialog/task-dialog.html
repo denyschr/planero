@@ -31,7 +31,7 @@
 
         <div class="flex overflow-hidden">
           <div class="grow p-4 overflow-y-auto">
-            <form class="space-y-4" [formGroup]="form" (ngSubmit)="update()">
+            <form class="space-y-4" [formGroup]="form" (ngSubmit)="updateTask()">
               <div class="flex flex-col gap-y-2">
                 <label class="font-semibold" for="title">Title</label>
                 <textarea
@@ -70,7 +70,12 @@
           <div class="p-4 border-l border-l-gray-300 bg-surface-50">
             <div class="space-y-2">
               <p class="font-semibold">Actions</p>
-              <p-button label="Delete" icon="pi pi-trash" severity="secondary" (click)="delete()" />
+              <p-button
+                label="Delete"
+                icon="pi pi-trash"
+                severity="secondary"
+                (click)="deleteTask()"
+              />
             </div>
           </div>
         </div>
