@@ -9,13 +9,13 @@ import { BoardApiClient } from '../board-api-client';
 import { Board } from '../models/board';
 import { CreateBoardDialog } from '../create-board-dialog/create-board-dialog';
 
-import Boards from './boards';
+import { Boards } from './boards';
 
 describe(Boards.name, () => {
   function setup() {
     const fakeBoards = [
-      { id: '1', title: 'Foo', backgroundColor: 'red' },
-      { id: '2', title: 'Bar', backgroundColor: 'blue' }
+      { id: '1', title: 'Foo' },
+      { id: '2', title: 'Bar' }
     ] as Board[];
     const boardApiClientSpy = jasmine.createSpyObj<BoardApiClient>('BoardApiClient', ['list']);
     boardApiClientSpy.list.and.returnValue(of(fakeBoards));
@@ -55,9 +55,6 @@ describe(Boards.name, () => {
     expect(boards[0].href)
       .withContext('The `href` attribute of the board is incorrect')
       .toContain(`/boards/${fakeBoards[0].id}`);
-    expect(boards[0].style.backgroundColor)
-      .withContext('The board should have a background color')
-      .toBe(fakeBoards[0].backgroundColor);
     expect(boards[0].textContent)
       .withContext('The board should have a text')
       .toContain(fakeBoards[0].title);

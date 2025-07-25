@@ -1,0 +1,34 @@
+<div class="p-2">
+  @if (activated()) {
+    <form class="w-full space-y-2" (keydown.escape)="cancel()" (ngSubmit)="submit()">
+      <textarea
+        class="w-full min-h-20 resize-none px-2 py-1 text-sm font-medium rounded-md shadow-sm"
+        name="task-title"
+        placeholder="Enter a title..."
+        [(ngModel)]="title"
+        #titleInputRef
+      ></textarea>
+      <div class="flex items-center gap-x-1">
+        <p-button label="Add task" size="small" styleClass="leading-5" type="submit" />
+        <p-button
+          label="Cancel"
+          size="small"
+          variant="text"
+          severity="secondary"
+          styleClass="leading-5"
+          (click)="cancel()"
+        />
+      </div>
+    </form>
+  } @else {
+    <p-button
+      label="Add a task"
+      icon="pi pi-plus"
+      size="small"
+      variant="text"
+      severity="secondary"
+      styleClass="w-full justify-start!"
+      (click)="activate()"
+    />
+  }
+</div>

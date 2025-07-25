@@ -30,7 +30,7 @@ export const APP_ROUTES: Route[] = [
     children: [
       {
         path: 'boards',
-        loadComponent: () => import('./boards/boards')
+        loadChildren: () => import('./boards/routes')
       }
     ]
   }

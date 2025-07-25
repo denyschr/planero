@@ -1,0 +1,94 @@
+<p-dialog
+  styleClass="w-[40rem] min-h-50 overflow-hidden"
+  maskStyleClass="backdrop-blur-xs"
+  [modal]="true"
+  [(visible)]="visible"
+  [draggable]="false"
+  [dismissableMask]="true"
+  (onHide)="redirectToBoard()"
+>
+  <ng-template #headless>
+    @if (vm(); as vm) {
+      @if (vm.task) {
+        <div
+          class="flex items-center justify-between gap-x-3 px-4 py-3 border-b border-b-surface-300"
+        >
+          <p-select
+            class="w-56"
+            [options]="vm.columns"
+            [(ngModel)]="selectedColumn"
+            optionLabel="title"
+            (onChange)="changeColumn($event.value)"
+          />
+          <p-button
+            icon="pi pi-times"
+            variant="text"
+            severity="secondary"
+            [rounded]="true"
+            (click)="redirectToBoard()"
+          />
+        </div>
+
+        <div class="flex overflow-hidden">
+          <div class="grow p-4 overflow-y-auto">
+            <form class="space-y-4" [formGroup]="form" (ngSubmit)="updateTask()">
+              <div class="flex flex-col gap-y-2">
+                <label class="font-semibold" for="title">Title</label>
+                <textarea
+                  id="title"
+                  rows="1"
+                  [autoResize]="true"
+                  pTextarea
+                  formControlName="title"
+                ></textarea>
+                @if (titleControl.dirty && titleControl.hasError('required')) {
+                  <p-message
+                    id="title-required-error"
+                    severity="error"
+                    variant="simple"
+                    size="small"
+                    >Task title is required</p-message
+                  >
+                }
+              </div>
+              <div class="flex flex-col gap-y-2">
+                <label class="font-semibold" for="description">Description</label>
+                <textarea
+                  id="description"
+                  class="max-h-52 min-h-12"
+                  rows="5"
+                  pTextarea
+                  formControlName="description"
+                ></textarea>
+              </div>
+              <div class="flex items-center gap-x-2">
+                <p-button label="Save" type="submit" [disabled]="form.invalid" />
+                <p-button label="Cancel" severity="secondary" text (click)="redirectToBoard()" />
+              </div>
+            </form>
+          </div>
+          <div class="p-4 border-l border-l-gray-300 bg-surface-50">
+            <div class="space-y-2">
+              <p class="font-semibold">Actions</p>
+              <p-button
+                label="Delete"
+                icon="pi pi-trash"
+                severity="secondary"
+                (click)="deleteTask()"
+              />
+            </div>
+          </div>
+        </div>
+      } @else {
+        <div class="grid place-items-center grow p-4">
+          <p-progress-spinner
+            [style]="{ width: '50px', height: '50px' }"
+            strokeWidth="4"
+            animationDuration="1s"
+            aria-label="Loading"
+          />
+        </div>
+      }
+    }
+  </ng-template>
+</p-dialog>

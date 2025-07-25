@@ -50,11 +50,9 @@ export const create = async (request: ExpressRequest, response: Response, next: 
     if (!currentUser) {
       return void sendUnauthorized(response, request.originalUrl);
     }
-    const { title, backgroundColor } = request.body;
     const newBoard = new BoardModel({
-      title,
-      userId: currentUser.id,
-      backgroundColor
+      title: request.body.title,
+      userId: currentUser.id
     });
     const savedBoard = await newBoard.save();
     response.send(savedBoard);

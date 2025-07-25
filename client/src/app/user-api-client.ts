@@ -7,6 +7,7 @@ import { environment } from '../environments/environment';
 
 import { User } from './models/user';
 import { JwtStorage } from './jwt-storage';
+import { Websocket } from './websocket';
 
 @Injectable({
   providedIn: 'root'
@@ -15,8 +16,9 @@ export class UserApiClient {
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
   private readonly jwtStorage = inject(JwtStorage);
-  private readonly user = signal<User | null>(null);
+  private readonly websocket = inject(Websocket);
 
+  private readonly user = signal<User | null>(null);
   public readonly currentUser = this.user.asReadonly();
 
   public get(): Observable<User> {
@@ -46,12 +48,14 @@ export class UserApiClient {
 
   public logout(): void {
     this.clear();
+    this.websocket.disconnect();
     this.router.navigateByUrl('/home');
   }
 
   private save(user: User): void {
     this.jwtStorage.save(user.token);
     this.user.set(user);
+    this.websocket.connect(user);
   }
 
   private clear(): void {

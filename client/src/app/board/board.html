@@ -1,0 +1,37 @@
+@if (vm().loaded) {
+  @let board = vm().board;
+  @if (board) {
+    <div class="flex flex-col h-full">
+      <div class="flex items-center justify-between gap-x-4 p-4">
+        <pln-inplace-input [value]="board.title" (valueChanged)="updateBoardTitle($event)" />
+        <pln-board-menu (deleted)="deleteBoard()" />
+      </div>
+      <div class="grow mb-2 px-2 pb-4 overflow-x-auto">
+        <ol class="flex h-full">
+          @for (column of vm().columns; track column.id) {
+            <li class="shrink-0 w-[278px] h-full px-1.5 select-none">
+              <pln-column-card
+                [column]="column"
+                [tasks]="vm().tasks"
+                (titleChanged)="updateColumnTitle($event, column.id)"
+                (columnDeleted)="deleteColumn(column.id)"
+                (taskCreated)="createTask($event, column.id)"
+              />
+            </li>
+          }
+          <div class="shrink-0 w-[278px] h-full px-1.5 select-none">
+            <pln-inplace-form
+              class="button-add-column"
+              displayText="Add another column"
+              displayIcon="pi pi-plus text-sm!"
+              placeholder="Enter column name..."
+              (created)="createColumn($event)"
+            />
+          </div>
+        </ol>
+      </div>
+    </div>
+  }
+}
+
+<router-outlet />

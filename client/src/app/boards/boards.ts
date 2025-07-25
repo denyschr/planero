@@ -12,7 +12,7 @@ import { CreateBoardDialog } from '../create-board-dialog/create-board-dialog';
   imports: [RouterLink, CreateBoardDialog],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export default class Boards {
+export class Boards {
   private readonly boardApiClient = inject(BoardApiClient);
 
   public readonly refreshSubject = new Subject<void>();

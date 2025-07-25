@@ -3,7 +3,55 @@
 
 @plugin "tailwindcss-primeui";
 
+:root {
+  --text-color: var(--p-surface-700);
+}
+
+:root[class='app-dark'] {
+  --text-color: var(--p-surface-0);
+}
+
 html,
 body {
-  height: 100%;
+  @apply h-full;
+}
+
+html {
+  @apply leading-[1.2];
+}
+
+body {
+  @apply text-[var(--text-color)];
+}
+
+.p-inplace-display {
+  @apply w-full;
+}
+
+.column-title-editable {
+  @apply grow font-semibold;
+  .p-inplace-display {
+    @apply wrap-anywhere;
+  }
+
+  .p-textarea {
+    @apply text-sm;
+  }
+}
+
+.button-add-column {
+  @apply text-sm font-medium;
+  .p-inplace-content {
+    @apply p-3 rounded-md bg-surface-50 shadow-md;
+  }
+
+  .p-textarea {
+    @apply text-sm;
+  }
+}
+
+.button-add-task {
+  .p-textarea {
+    @apply text-sm;
+  }
 }

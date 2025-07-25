@@ -32,16 +32,17 @@ export default class Register {
     email: this.emailControl,
     password: this.passwordControl
   });
+  protected readonly submitted = signal(false);
   protected readonly failed = signal(false);
 
   protected submit(): void {
+    this.submitted.set(true);
     this.failed.set(false);
-    this.form.disable();
     this.userApiClient.register(this.form.getRawValue()).subscribe({
       next: () => this.router.navigateByUrl('/boards'),
       error: () => {
+        this.submitted.set(false);
         this.failed.set(true);
-        this.form.enable();
       }
     });
   }

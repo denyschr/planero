@@ -1,0 +1,38 @@
+<p-inplace>
+  <ng-template #display>
+    <span class="inline-flex items-center gap-x-2">
+      @if (displayIcon(); as icon) {
+        <span [class]="icon"></span>
+      }
+      {{ displayText() }}
+    </span>
+  </ng-template>
+  <ng-template #content let-closeCallback="closeCallback">
+    <form (ngSubmit)="add(textareaRef)">
+      <textarea
+        class="mb-1"
+        pTextarea
+        [(ngModel)]="value"
+        [ngModelOptions]="{ standalone: true }"
+        [fluid]="true"
+        [pAutoFocus]="true"
+        [autoResize]="true"
+        [placeholder]="placeholder()"
+        (keydown.enter)="add(textareaRef, $event)"
+        (keydown.meta.enter)="add(textareaRef, $event)"
+        (keydown.escape)="closeCallback($event)"
+        #textareaRef
+      ></textarea>
+      <div class="flex items-center gap-x-1">
+        <p-button label="Add" size="small" type="submit" />
+        <p-button
+          label="Cancel"
+          size="small"
+          variant="text"
+          severity="secondary"
+          (click)="closeCallback($event)"
+        />
+      </div>
+    </form>
+  </ng-template>
+</p-inplace>

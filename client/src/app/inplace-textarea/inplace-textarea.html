@@ -1,0 +1,21 @@
+<p-inplace (onActivate)="activate()">
+  <ng-template #display>
+    <span>{{ value() }}</span>
+  </ng-template>
+  <ng-template #content let-closeCallback="closeCallback">
+    <textarea
+      pTextarea
+      [(ngModel)]="value"
+      [fluid]="true"
+      [pAutoFocus]="true"
+      [autoResize]="true"
+      rows="1"
+      (focus)="textareaRef.select()"
+      (blur)="close(); closeCallback($event)"
+      (keydown.enter)="close(); closeCallback($event)"
+      (keydown.meta.enter)="close(); closeCallback($event)"
+      (keydown.escape)="close(); closeCallback($event)"
+      #textareaRef
+    ></textarea>
+  </ng-template>
+</p-inplace>

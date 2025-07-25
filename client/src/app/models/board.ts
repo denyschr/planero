@@ -4,5 +4,4 @@ export type Board = {
   createdAt: string;
   updatedAt: string;
   userId: string;
-  backgroundColor: string;
 };

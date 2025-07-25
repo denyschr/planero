@@ -1,0 +1,20 @@
+<p-inplace (onActivate)="activate()">
+  <ng-template #display>
+    <span>{{ value() }}</span>
+  </ng-template>
+  <ng-template #content let-closeCallback="closeCallback">
+    <input
+      type="text"
+      pInputText
+      [(ngModel)]="value"
+      [fluid]="true"
+      [pAutoFocus]="true"
+      (focus)="inputRef.select()"
+      (blur)="close(); closeCallback($event)"
+      (keydown.enter)="close(); closeCallback($event)"
+      (keydown.meta.enter)="close(); closeCallback($event)"
+      (keydown.escape)="close(); closeCallback($event)"
+      #inputRef
+    />
+  </ng-template>
+</p-inplace>
