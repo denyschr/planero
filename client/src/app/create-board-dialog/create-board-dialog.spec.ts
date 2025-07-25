@@ -120,9 +120,10 @@ describe(CreateBoardDialog.name, () => {
     button.click();
     fixture.detectChanges();
 
-    expect(boardApiClientSpy.create).toHaveBeenCalledOnceWith({
-      title: 'foo'
-    });
+    expect(button.hasAttribute('disabled'))
+      .withContext('Your submit button should NOT be disabled when the form submission fails')
+      .toBeFalsy();
+    expect(boardApiClientSpy.create).toHaveBeenCalledOnceWith({ title: 'foo' });
     expect(messageServiceSpy.add).toHaveBeenCalledOnceWith({
       severity: 'error',
       summary: 'Failed to create new board'

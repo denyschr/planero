@@ -188,18 +188,6 @@ describe(Register.name, () => {
     button.click();
     fixture.detectChanges();
 
-    expect(usernameInput.hasAttribute('disabled'))
-      .withContext('Your username field should be disabled when the form is submitted')
-      .toBeTruthy();
-    expect(emailInput.hasAttribute('disabled'))
-      .withContext('Your email field should be disabled when the form is submitted')
-      .toBeTruthy();
-    expect(passwordInput.hasAttribute('disabled'))
-      .withContext('Your password field should be disabled when the form is submitted')
-      .toBeTruthy();
-    expect(button.hasAttribute('disabled'))
-      .withContext('Your submit button should be disabled when the form is submitted')
-      .toBeTruthy();
     expect(userApiClientSpy.register).toHaveBeenCalledOnceWith(fakeCredentials);
     expect(router.navigateByUrl).toHaveBeenCalledOnceWith('/boards');
   });
@@ -225,15 +213,6 @@ describe(Register.name, () => {
     button.click();
     fixture.detectChanges();
 
-    expect(usernameInput.hasAttribute('disabled'))
-      .withContext('Your username field should NOT be disabled when the form submission fails')
-      .toBeFalsy();
-    expect(emailInput.hasAttribute('disabled'))
-      .withContext('Your email field should NOT be disabled when the form submission fails')
-      .toBeFalsy();
-    expect(passwordInput.hasAttribute('disabled'))
-      .withContext('Your password field should NOT be disabled when the form submission fails')
-      .toBeFalsy();
     expect(button.hasAttribute('disabled'))
       .withContext('Your submit button should NOT be disabled when the form submission fails')
       .toBeFalsy();

@@ -48,7 +48,7 @@
         label="Sign in"
         styleClass="w-full"
         type="submit"
-        [disabled]="form.invalid || form.disabled"
+        [disabled]="form.invalid || submitted()"
       />
     </form>
 
