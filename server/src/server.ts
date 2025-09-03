@@ -105,6 +105,10 @@ io.use(async (socket: SocketRequest, next) => {
     tasksController.update(io, socket, task);
   });
 
+  socket.on('reorder-tasks', (data) => {
+    tasksController.reorder(io, socket, data);
+  });
+
   socket.on('delete-task', (task) => {
     tasksController.deleteTask(io, socket, task);
   });
