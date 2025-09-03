@@ -8,6 +8,10 @@ const columnSchema = new mongoose.Schema<Column>(
       type: String,
       required: true
     },
+    order: {
+      type: Number,
+      required: true
+    },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       required: true
