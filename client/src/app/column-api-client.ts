@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 
 import { environment } from '../environments/environment';
 
-import { Column } from './models/column';
+import { Column, ColumnReorderUpdate } from './models/column';
 import { Websocket } from './websocket';
 
 @Injectable({
@@ -28,5 +28,9 @@ export class ColumnApiClient {
 
   public delete(id: string, boardId: string): void {
     this.websocket.emit('delete-column', { id, boardId });
+  }
+
+  public reorder(boardId: string, columns: ColumnReorderUpdate[]): void {
+    this.websocket.emit('reorder-columns', { boardId, columns });
   }
 }

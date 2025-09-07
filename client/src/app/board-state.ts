@@ -59,6 +59,14 @@ export class BoardState {
       });
   }
 
+  public setColumns(columns: Column[]): void {
+    this.state.update((state) => ({ ...state, columns }));
+  }
+
+  public setTasks(tasks: Task[]): void {
+    this.state.update((state) => ({ ...state, tasks }));
+  }
+
   public updateBoard(update: Board): void {
     this.state.update((state) => ({ ...state, board: { ...state.board, ...update } }));
   }

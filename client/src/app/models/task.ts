@@ -8,3 +8,9 @@ export type Task = {
   boardId: string;
   columnId: string;
 };
+
+export type TaskReorderUpdate = {
+  id: string;
+  columnId: string;
+  order: number;
+};
