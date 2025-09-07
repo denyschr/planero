@@ -19,7 +19,7 @@ export const list = async (request: ExpressRequest, response: Response, next: Ne
       return void sendNotFound(response, request.originalUrl);
     }
 
-    const columns = await ColumnModel.find({ boardId });
+    const columns = await ColumnModel.find({ boardId }).sort({ order: 1 });
     response.send(columns);
   } catch (error) {
     next(error);
@@ -36,11 +36,18 @@ export const create = async (
     if (!currentUser) {
       return void socket.emit('create-column-failure', 'Unauthorized');
     }
+
+    const lastColumn = await ColumnModel.findOne({ boardId: column.boardId })
+      .sort({ order: -1 })
+      .select('order');
+
     const newColumn = new ColumnModel({
       title: column.title,
+      order: lastColumn ? lastColumn.order + 1 : 0,
       userId: currentUser.id,
       boardId: column.boardId
     });
+
     const savedColumn = await newColumn.save();
     io.to(column.boardId).emit('create-column-success', savedColumn);
   } catch (error) {
@@ -63,6 +70,33 @@ export const update = async (
     io.to(column.boardId).emit('update-column-success', updatedColumn);
   } catch (error) {
     socket.emit('update-column-failure', getErrorMessage(error));
+  }
+};
+
+export const reorder = async (
+  io: Server,
+  socket: SocketRequest,
+  data: { boardId: string; columns: { id: string; order: number }[] }
+) => {
+  try {
+    if (!socket.currentUser) {
+      return void socket.emit('reorder-columns-failure', 'Unauthorized');
+    }
+
+    const bulkOps = data.columns.map(({ id, order }) => ({
+      updateOne: {
+        filter: { _id: id },
+        update: { order }
+      }
+    }));
+
+    await ColumnModel.bulkWrite(bulkOps);
+
+    const updatedColumns = await ColumnModel.find({ boardId: data.boardId }).sort({ order: 1 });
+
+    io.to(data.boardId).emit('reorder-columns-success', updatedColumns);
+  } catch (error) {
+    socket.emit('reorder-columns-failure', getErrorMessage(error));
   }
 };
 

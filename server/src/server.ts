@@ -89,6 +89,10 @@ io.use(async (socket: SocketRequest, next) => {
     columnsController.update(io, socket, column);
   });
 
+  socket.on('reorder-columns', (data) => {
+    columnsController.reorder(io, socket, data);
+  });
+
   socket.on('delete-column', (column) => {
     columnsController.deleteColumn(io, socket, column);
   });
@@ -99,6 +103,10 @@ io.use(async (socket: SocketRequest, next) => {
 
   socket.on('update-task', (task) => {
     tasksController.update(io, socket, task);
+  });
+
+  socket.on('reorder-tasks', (data) => {
+    tasksController.reorder(io, socket, data);
   });
 
   socket.on('delete-task', (task) => {

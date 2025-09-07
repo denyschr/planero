@@ -11,6 +11,10 @@ const taskSchema = new mongoose.Schema<Task>(
     description: {
       type: String
     },
+    order: {
+      type: Number,
+      required: true
+    },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       required: true
