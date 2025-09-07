@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { ActivatedRoute, NavigationStart, Router, RouterOutlet } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter, tap } from 'rxjs';
+import { CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
 
 import { Board as BoardType } from '../models/board';
 import { BoardApiClient } from '../board-api-client';
@@ -19,7 +20,7 @@ import { InplaceInput } from '../inplace-input/inplace-input';
 @Component({
   selector: 'pln-board',
   templateUrl: './board.html',
-  imports: [ColumnCard, BoardMenu, RouterOutlet, InplaceForm, InplaceInput],
+  imports: [ColumnCard, BoardMenu, RouterOutlet, InplaceForm, InplaceInput, CdkDrag, CdkDropList],
   providers: [BoardState],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -91,6 +92,13 @@ export class Board {
       });
 
     this.websocket
+      .listen<Column[]>('reorder-columns-success')
+      .pipe(takeUntilDestroyed())
+      .subscribe((columns) => {
+        this.boardState.setColumns(columns);
+      });
+
+    this.websocket
       .listen<Task>('create-task-success')
       .pipe(takeUntilDestroyed())
       .subscribe((task) => {
@@ -130,6 +138,20 @@ export class Board {
 
   protected deleteColumn(id: string): void {
     this.columnApiClient.delete(id, this.id);
+  }
+
+  protected dropColumn(event: CdkDragDrop<Column[]>): void {
+    const columns = [...this.vm().columns];
+    moveItemInArray(columns, event.previousIndex, event.currentIndex);
+
+    this.boardState.setColumns(columns);
+
+    const updates = columns.map((column, index) => ({
+      id: column.id,
+      order: index
+    }));
+
+    this.columnApiClient.reorder(this.id, updates);
   }
 
   protected createTask(title: string, columnId: string): void {

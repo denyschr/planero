@@ -7,9 +7,14 @@
         <pln-board-menu (deleted)="deleteBoard()" />
       </div>
       <div class="grow mb-2 px-2 pb-4 overflow-x-auto">
-        <ol class="flex h-full">
+        <ol
+          class="flex h-full"
+          cdkDropList
+          cdkDropListOrientation="horizontal"
+          (cdkDropListDropped)="dropColumn($event)"
+        >
           @for (column of vm().columns; track column.id) {
-            <li class="shrink-0 w-[278px] h-full px-1.5 select-none">
+            <li class="shrink-0 w-[278px] h-full px-1.5 select-none" cdkDrag>
               <pln-column-card
                 [column]="column"
                 [tasks]="vm().tasks"

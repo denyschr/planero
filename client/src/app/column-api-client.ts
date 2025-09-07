@@ -29,4 +29,8 @@ export class ColumnApiClient {
   public delete(id: string, boardId: string): void {
     this.websocket.emit('delete-column', { id, boardId });
   }
+
+  public reorder(boardId: string, columns: { id: string; order: number }[]): void {
+    this.websocket.emit('reorder-columns', { boardId, columns });
+  }
 }
