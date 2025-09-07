@@ -2,7 +2,13 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { ActivatedRoute, NavigationStart, Router, RouterOutlet } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter, tap } from 'rxjs';
-import { CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
+import {
+  CdkDrag,
+  CdkDragDrop,
+  CdkDropList,
+  CdkDropListGroup,
+  moveItemInArray
+} from '@angular/cdk/drag-drop';
 
 import { Board as BoardType } from '../models/board';
 import { BoardApiClient } from '../board-api-client';
@@ -11,7 +17,7 @@ import { Column } from '../models/column';
 import { ColumnCard } from '../column-card/column-card';
 import { Websocket } from '../websocket';
 import { TaskApiClient } from '../task-api-client';
-import { Task } from '../models/task';
+import { Task, TaskReorderUpdate } from '../models/task';
 import { BoardMenu } from '../board-menu/board-menu';
 import { BoardState } from '../board-state';
 import { InplaceForm } from '../inplace-form/inplace-form';
@@ -20,7 +26,16 @@ import { InplaceInput } from '../inplace-input/inplace-input';
 @Component({
   selector: 'pln-board',
   templateUrl: './board.html',
-  imports: [ColumnCard, BoardMenu, RouterOutlet, InplaceForm, InplaceInput, CdkDrag, CdkDropList],
+  imports: [
+    ColumnCard,
+    BoardMenu,
+    RouterOutlet,
+    InplaceForm,
+    InplaceInput,
+    CdkDrag,
+    CdkDropList,
+    CdkDropListGroup
+  ],
   providers: [BoardState],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -118,6 +133,13 @@ export class Board {
       .subscribe((id) => {
         this.boardState.deleteTask(id);
       });
+
+    this.websocket
+      .listen<Task[]>('reorder-tasks-success')
+      .pipe(takeUntilDestroyed())
+      .subscribe((tasks) => {
+        this.boardState.setTasks(tasks);
+      });
   }
 
   protected updateBoardTitle(title: string): void {
@@ -156,5 +178,9 @@ export class Board {
 
   protected createTask(title: string, columnId: string): void {
     this.taskApiClient.create({ title, boardId: this.id, columnId });
+  }
+
+  protected reorderTask(updates: TaskReorderUpdate[]): void {
+    this.taskApiClient.reorder(this.id, updates);
   }
 }

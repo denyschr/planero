@@ -6,3 +6,8 @@ export type Column = {
   userId: string;
   boardId: string;
 };
+
+export type ColumnReorderUpdate = {
+  id: string;
+  order: number;
+};

@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 
 import { environment } from '../environments/environment';
 
-import { Task } from './models/task';
+import { Task, TaskReorderUpdate } from './models/task';
 import { Websocket } from './websocket';
 
 @Injectable({
@@ -32,5 +32,9 @@ export class TaskApiClient {
 
   public delete(id: string, boardId: string): void {
     this.websocket.emit('delete-task', { id, boardId });
+  }
+
+  public reorder(boardId: string, tasks: TaskReorderUpdate[]): void {
+    this.websocket.emit('reorder-tasks', { boardId, tasks });
   }
 }

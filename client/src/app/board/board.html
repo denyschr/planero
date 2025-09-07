@@ -10,6 +10,7 @@
         <ol
           class="flex h-full"
           cdkDropList
+          cdkDropListGroup
           cdkDropListOrientation="horizontal"
           (cdkDropListDropped)="dropColumn($event)"
         >
@@ -21,6 +22,7 @@
                 (titleChanged)="updateColumnTitle($event, column.id)"
                 (columnDeleted)="deleteColumn(column.id)"
                 (taskCreated)="createTask($event, column.id)"
+                (taskReordered)="reorderTask($event)"
               />
             </li>
           }
